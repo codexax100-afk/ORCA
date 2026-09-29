@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark" />
+<title>ORCA AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#1B1917;
+    --surface:#252120;
+    --surface-2:#2C2724;
+    --surface-3:#332D29;
+    --border:rgba(237,232,227,.08);
+    --border-2:rgba(237,232,227,.15);
+    --text:#EDE8E3;
+    --muted:#A79F97;
+    --dim:#7B736C;
+    --accent:#C9663F;
+    --accent-2:#E08A63;
+    --accent-soft:rgba(201,102,63,.13);
+    --serif:'Noto Naskh Arabic','Amiri',Georgia,'Times New Roman',serif;
+    --sans:'IBM Plex Sans Arabic',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --mono:'Courier New', Courier, monospace;
+    --r-lg:20px;
+    --r-md:14px;
+    --r-sm:10px;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:15px;
+    font-weight:300;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow:hidden;
+  }
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:radial-gradient(900px 520px at 50% -12%, rgba(201,102,63,.075), transparent 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ============ القائمة الجانبية ============ */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 150;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .3s ease, visibility .3s;
+  }
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    right: -310px;
+    width: 310px;
+    max-width: 85vw;
+    height: 100vh;
+    height: 100dvh;
+    background: #1C1A18;
+    border-left: 1px solid rgba(237,232,227,.1);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    transition: right .4s cubic-bezier(.22,.61,.36,1);
+    box-shadow: -20px 0 50px rgba(0,0,0,0.6);
+  }
+  .sidebar.open {
+    right: 0;
+  }
+
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 12px;
+    border-bottom: 1px solid rgba(237,232,227,.06);
+  }
+  .sidebar-header .brand-small {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+  .sidebar-header .icon-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .new-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 16px 20px;
+    padding: 14px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(201,102,63,.4);
+    background: linear-gradient(135deg, rgba(201,102,63,.2), rgba(201,102,63,.05));
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s ease;
+    box-shadow: 0 4px 15px rgba(201,102,63,0.1);
+  }
+  .new-chat-btn:hover {
+    background: linear-gradient(135deg, rgba(201,102,63,.35), rgba(201,102,63,.1));
+    border-color: rgba(201,102,63,.6);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201,102,63,0.2);
+  }
+  .new-chat-btn:active {
+    transform: translateY(0);
+  }
+  .new-chat-btn svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent-2);
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 20px 10px;
+  }
+
+  .sidebar-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(237,232,227,.1) transparent;
+  }
+  .sidebar-list::-webkit-scrollbar { width: 6px; }
+  .sidebar-list::-webkit-scrollbar-thumb { background: rgba(237,232,227,.1); border-radius: 99px; }
+
+  .empty-history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    color: var(--dim);
+    padding: 60px 20px;
+    line-height: 1.8;
+    gap: 12px;
+  }
+  .empty-history svg {
+    width: 32px;
+    height: 32px;
+    opacity: 0.3;
+  }
+
+  .chat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    text-align: start;
+    padding: 12px 16px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all .15s ease;
+    position: relative;
+  }
+  .chat-item:hover {
+    background: var(--surface-2);
+    border-color: rgba(237,232,227,.08);
+    color: var(--text);
+  }
+  .chat-item .ci-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .chat-item .ci-title {
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .chat-item .ci-time {
+    font-size: 10.5px;
+    color: var(--dim);
+  }
+  .delete-chat-btn {
+    opacity: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 0;
+    background: transparent;
+    color: var(--dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s ease;
+    flex-shrink: 0;
+  }
+  .chat-item:hover .delete-chat-btn {
+    opacity: 1;
+  }
+  .delete-chat-btn:hover {
+    background: rgba(255, 107, 107, 0.15);
+    color: #ff6b6b;
+  }
+  .delete-chat-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* ============ تسجيل الدخول والحساب ============ */
+  .auth-screen{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:#11100f;
+  }
+  .auth-screen[hidden]{display:none}
+  .auth-card{
+    width:min(420px,100%);
+    padding:30px 24px 24px;
+    border:1px solid rgba(237,232,227,.10);
+    border-radius:24px;
+    background:linear-gradient(180deg,#24211f,#1c1a18);
+    box-shadow:0 25px 80px rgba(0,0,0,.55);
+  }
+  .auth-logo{font-family:var(--serif);font-size:30px;font-weight:700;text-align:center;color:var(--text)}
+  .auth-subtitle{text-align:center;color:var(--muted);font-size:13px;margin:5px 0 24px}
+  .auth-tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#181614;border-radius:12px;margin-bottom:20px}
+  .auth-tab{border:0;background:transparent;color:var(--muted);padding:10px;border-radius:9px;font-family:var(--sans);cursor:pointer;font-size:13px}
+  .auth-tab.active{background:#2c2825;color:var(--text)}
+  .auth-form{display:flex;flex-direction:column;gap:12px}
+  .auth-form[hidden]{display:none}
+  .auth-label{font-size:12px;color:#b8b0a8;margin-bottom:-5px}
+  .auth-input{width:100%;height:46px;border:1px solid rgba(237,232,227,.11);border-radius:12px;background:#181614;color:var(--text);padding:0 13px;outline:none;font-family:var(--sans);font-size:14px;direction:ltr;text-align:left}
+  .auth-input:focus{border-color:rgba(201,102,63,.55);box-shadow:0 0 0 3px rgba(201,102,63,.08)}
+  .auth-submit{height:46px;border:0;border-radius:12px;background:var(--accent);color:#171310;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
+  .auth-submit:active{transform:translateY(1px)}
+  .auth-message{min-height:20px;text-align:center;color:#c7bfb8;font-size:12px;line-height:1.6;margin-top:10px}
+  .auth-message.error{color:#d98b7a}
+  .auth-note{text-align:center;color:#6f6862;font-size:10.5px;line-height:1.7;margin-top:14px}
+  .account-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid rgba(237,232,227,.06);color:var(--dim);font-size:11px}
+  .account-email{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left}
+  .logout-btn{border:1px solid rgba(237,232,227,.09);background:transparent;color:var(--muted);border-radius:9px;padding:7px 10px;font-family:var(--sans);font-size:11px;cursor:pointer}
+  .logout-btn:hover{background:rgba(255,255,255,.05);color:var(--text)}
+
+  /* ============ التطبيق ============ */
+  .app{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    height:100dvh;
+    max-width:780px;
+    width:100%;
+    margin:0 auto;
+  }
+
+  /* ============ الترويسة ============ */
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:14px 18px;
+    border-bottom:1px solid var(--border);
+    background:rgba(27,25,23,.72);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    flex:0 0 auto;
+    position: relative;
+    z-index: 50;
+  }
+
+  .brand{
+    font-family:var(--serif);
+    font-size:19px;
+    font-weight:600;
+    color:var(--text);
+    line-height:1;
+    user-select:none;
+    text-align: center;
+    flex: 1;
+  }
+  .brand small{
+    display:block;
+    font-family:var(--sans);
+    font-size:10.5px;
+    font-weight:300;
+    color:var(--dim);
+    margin-top:5px;
+    line-height:1;
+  }
+
+  .icon-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:36px;
+    height:36px;
+    border-radius:var(--r-sm);
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--muted);
+    cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+    flex:0 0 auto;
+  }
+  .icon-btn:hover{background:var(--surface-2);color:var(--text);border-color:var(--border-2)}
+  .icon-btn:active{transform:translateY(1px)}
+  .icon-btn svg{width:18px;height:18px;display:block}
+
+  /* ============ زر النماذج ============ */
+  .model-wrap{position:relative;flex:0 0 auto}
+
+  .model-btn{
+    display:inline-flex;
+    align-items:center;
+    flex-wrap:nowrap;
+    white-space:nowrap;
+    direction:ltr;
+    gap:8px;
+    height:36px;
+    padding:0 14px;
+    border-radius:99px;
+    border:1px solid rgba(237,232,227,.12);
+    background:var(--surface-2);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  }
+  #modelLabel{white-space:nowrap;display:inline-block;line-height:1;direction:ltr}
+  .model-btn .dot{position:relative;top:0;align-self:center}
+  .model-btn:hover{
+    background:var(--surface-3);
+    border-color:rgba(201,102,63,.35);
+    box-shadow: 0 4px 14px rgba(201,102,63,0.1);
+  }
+  .model-btn .dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-soft);
+    flex:0 0 auto;
+  }
+  .model-btn .chev{
+    width:12px;height:12px;
+    color:var(--muted);
+    transition:transform .2s ease;
+  }
+  .model-wrap.open .chev{transform:rotate(180deg)}
+  .model-wrap.open .model-btn {
+    border-color: rgba(201,102,63,.5);
+    background: var(--surface-3);
+  }
+
+  .model-menu{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    width:240px;
+    padding:6px;
+    border-radius:var(--r-md);
+    border:1px solid var(--border-2);
+    background:#221E1C;
+    box-shadow:0 18px 40px -18px rgba(0,0,0,.85);
+    z-index:300;
+    opacity:0;
+    visibility:hidden;
+    transform:translateY(-6px);
+    transition:opacity .18s ease,transform .18s ease,visibility .18s;
+  }
+  .model-wrap.open .model-menu{opacity:1;visibility:visible;transform:none}
+
+  .model-item{
+    display:block;
+    width:100%;
+    text-align:start;
+    padding:10px 12px;
+    border:0;
+    border-radius:var(--r-sm);
+    background:transparent;
+    color:var(--text);
+    font-family:var(--sans);
+    cursor:pointer;
+    transition:background .15s ease;
+    position:relative;
+  }
+  .model-item:hover{background:var(--surface-2)}
+  .model-item .mi-name{
+    display:block;
+    font-size:13.5px;
+    font-weight:500;
+    line-height:1.5;
+  }
+  .model-item .mi-desc{
+    display:block;
+    font-size:11.5px;
+    font-weight:300;
+    color:var(--dim);
+    line-height:1.6;
+    margin-top:2px;
+  }
+  .model-item[aria-selected="true"]{background:var(--accent-soft)}
+  .model-item[aria-selected="true"] .mi-name{color:var(--accent-2)}
+  .model-item[aria-selected="true"]::after{
+    content:"";
+    position:absolute;
+    inset-inline-start:10px;
+    top:50%;
+    width:5px;height:5px;
+    margin-top:-2.5px;
+    border-radius:50%;
+    background:var(--accent);
+  }
+
+  /* ============ منطقة المحادثة ============ */
+  .chat{
+    flex:1 1 auto;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding:26px 18px 10px;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(237,232,227,.12) transparent;
+  }
+  .chat::-webkit-scrollbar{width:8px}
+  .chat::-webkit-scrollbar-track{background:transparent}
+  .chat::-webkit-scrollbar-thumb{
+    background:rgba(237,232,227,.1);
+    border-radius:99px;
+    border:2px solid var(--bg);
+  }
+
+  .row{
+    display:flex;
+    margin-bottom:24px;
+    animation:rise .32s cubic-bezier(.22,.61,.36,1) both;
+  }
+  .row.user{justify-content:flex-end}
+  .row.assistant{justify-content:flex-start}
+
+  @keyframes rise{
+    from{opacity:0;transform:translateY(7px)}
+    to{opacity:1;transform:none}
+  }
+
+  .bubble{
+    max-width:100%;
+    white-space:pre-wrap;
+    word-break:break-word;
+    overflow-wrap:anywhere;
+  }
+
+  .row.user .bubble{
+    max-width:86%;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px 16px 16px 6px;
+    padding:10px 15px;
+    font-size:14.5px;
+    line-height:1.8;
+    color:#E9E3DD;
+  }
+
+  .row.assistant .bubble{
+    max-width:100%;
+    padding:0 2px;
+    font-size:15px;
+    line-height:1.95;
+    color:#E6E0DA;
+  }
+
+  /* ============ كتلة الكود — ستايل فاخر قريب من Claude ============ */
+  .code-block{
+    position:relative;
+    width:100%;
+    margin:18px 0;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.105);
+    border-radius:16px;
+    background:#11100f;
+    direction:ltr;
+    text-align:left;
+    box-shadow:0 10px 28px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.025);
+  }
+
+  .code-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    min-height:48px;
+    padding:8px 10px 8px 14px;
+    background:rgba(255,255,255,.035);
+    border-bottom:1px solid rgba(255,255,255,.07);
+    color:#aaa39c;
+    font-family:var(--sans);
+  }
+
+  .code-language{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+    font-size:11px;
+    font-weight:600;
+    letter-spacing:.65px;
+    text-transform:uppercase;
+    color:#b8b1aa;
+  }
+
+  .code-language::before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#7f776f;
+    box-shadow:0 0 0 3px rgba(127,119,111,.10);
+    flex:0 0 auto;
+  }
+
+  .copy-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    height:32px;
+    min-width:72px;
+    padding:0 10px;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:9px;
+    background:rgba(255,255,255,.045);
+    color:#b5ada5;
+    cursor:pointer;
+    font-family:var(--sans);
+    font-size:11.5px;
+    font-weight:500;
+    transition:background .18s ease,color .18s ease,border-color .18s ease,transform .12s ease;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  .copy-btn svg{width:14px;height:14px;flex:0 0 auto}
+  .copy-btn:hover:not(:disabled){background:rgba(255,255,255,.085);color:#eee9e4;border-color:rgba(255,255,255,.17)}
+  .copy-btn:active:not(:disabled){transform:scale(.97)}
+  .copy-btn.copied{color:#d7d0ca;border-color:rgba(190,190,190,.22);background:rgba(190,190,190,.08)}
+  .copy-btn:disabled{opacity:.42;cursor:default}
+
+  .code-block pre{
+    margin:0;
+    padding:18px 18px 20px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    min-height:0;
+    max-height:560px;
+    overscroll-behavior-x:contain;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(255,255,255,.11) transparent;
+  }
+  .code-block pre::-webkit-scrollbar{height:7px}
+  .code-block pre::-webkit-scrollbar-track{background:transparent}
+  .code-block pre::-webkit-scrollbar-thumb{background:rgba(255,255,255,.11);border-radius:999px}
+
+  .code-block code{
+    display:block;
+    width:max-content;
+    min-width:100%;
+    margin:0;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    font-size:13px;
+    color:#d6d2ce;
+    line-height:1.72;
+    tab-size:2;
+    white-space:pre;
+  }
+
+  @media (max-width:640px){
+    .code-block{border-radius:15px;margin:16px 0}
+    .code-header{min-height:46px;padding:7px 9px 7px 12px}
+    .copy-btn{height:31px;min-width:68px;padding:0 9px}
+    .code-block pre{padding:16px 14px 18px;max-height:500px}
+    .code-block code{font-size:12.5px;line-height:1.68}
+  }
+
+  /* Syntax Highlighting */
+  .hljs-tag { color: #E06C75; }
+  .hljs-attr { color: #D19A66; }
+  .hljs-string { color: #98C379; }
+  .hljs-comment { color: #5C6370; font-style: italic; }
+  .hljs-doctype { color: #C678DD; }
+  .hljs-keyword { color: #C678DD; }
+  .hljs-value { color: #ABB2BF; }
+
+  /* ============ الحالة الفارغة ============ */
+  .empty{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    min-height:100%;
+    padding:20px 4px 40px;
+    gap:0;
+  }
+  .empty[hidden]{display:none}
+
+  .empty h1{
+    font-family:var(--serif);
+    font-size:27px;
+    font-weight:600;
+    line-height:1.6;
+    color:var(--text);
+    margin-bottom:10px;
+  }
+  .empty p{
+    font-size:13.5px;
+    color:var(--dim);
+    max-width:330px;
+    line-height:1.9;
+    margin-bottom:26px;
+  }
+
+  .suggestions{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:100%;
+    max-width:400px;
+  }
+  .chip{
+    width:100%;
+    text-align:start;
+    padding:12px 16px;
+    border-radius:var(--r-md);
+    border:1px solid var(--border);
+    background:transparent;
+    color:var(--muted);
+    font-family:var(--sans);
+    font-size:13.5px;
+    font-weight:300;
+    line-height:1.7;
+    cursor:pointer;
+    transition:background .18s ease,border-color .18s ease,color .18s ease;
+  }
+  .chip:hover{
+    background:var(--surface);
+    border-color:var(--border-2);
+    color:var(--text);
+  }
+
+  /* ============ صندوق الكتابة ============ */
+  .composer-area{
+    flex:0 0 auto;
+    padding:10px 18px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .composer{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--r-lg);
+    padding:8px 10px 8px 8px;
+    transition:border-color .2s ease,background .2s ease;
+  }
+  .composer:focus-within{
+    border-color:rgba(201,102,63,.42);
+    background:var(--surface-2);
+  }
+
+  #input{
+    flex:1 1 auto;
+    min-height:26px;
+    max-height:168px;
+    padding:8px 8px 8px 4px;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:14.5px;
+    font-weight:300;
+    line-height:1.75;
+    resize:none;
+    overflow-y:auto;
+    scrollbar-width:thin;
+    scrollbar-color:rgba(237,232,227,.12) transparent;
+  }
+  #input::placeholder{color:var(--dim)}
+  #input::-webkit-scrollbar{width:6px}
+  #input::-webkit-scrollbar-thumb{background:rgba(237,232,227,.12);border-radius:99px}
+
+  .send{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    flex:0 0 auto;
+    border:0;
+    border-radius:13px;
+    background:var(--accent);
+    color:#1B1917;
+    cursor:pointer;
+    transition:background .18s ease,opacity .18s ease,transform .12s ease;
+  }
+  .send svg{width:17px;height:17px;display:block}
+  .send:hover:not(:disabled){background:var(--accent-2)}
+  .send:active:not(:disabled){transform:translateY(1px)}
+  .send:disabled{
+    background:var(--surface-3);
+    color:var(--dim);
+    cursor:default;
+    opacity:.7;
+  }
+
+  .footnote{
+    text-align:center;
+    font-size:10.5px;
+    color:#5E5751;
+    margin-top:9px;
+    line-height:1.6;
+    user-select:none;
+  }
+
+  :focus-visible{
+    outline:2px solid rgba(201,102,63,.55);
+    outline-offset:2px;
+    border-radius:6px;
+  }
+
+  @media (min-width:640px){
+    header{padding:16px 24px}
+    .chat{padding:34px 24px 12px}
+    .composer-area{padding:12px 24px calc(20px + env(safe-area-inset-bottom))}
+    .empty h1{font-size:31px}
+    .row{margin-bottom:26px}
+  }
+</style>
+</head>
+<body>
+
+<!-- شاشة الحساب -->
+<section class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">ORCA AI</div>
+    <div class="auth-subtitle">سجّل حسابك للبدء</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="loginTab" type="button">تسجيل الدخول</button>
+      <button class="auth-tab" id="registerTab" type="button">إنشاء حساب</button>
+    </div>
+
+    <form class="auth-form" id="loginForm" autocomplete="on">
+      <label class="auth-label" for="loginEmail">البريد الإلكتروني</label>
+      <input class="auth-input" id="loginEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
+      <label class="auth-label" for="loginPassword">كلمة المرور</label>
+      <input class="auth-input" id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      <button class="auth-submit" type="submit">دخول</button>
+    </form>
+
+    <form class="auth-form" id="registerForm" autocomplete="on" hidden>
+      <label class="auth-label" for="registerEmail">البريد الإلكتروني</label>
+      <input class="auth-input" id="registerEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
+      <label class="auth-label" for="registerPassword">كلمة المرور</label>
+      <input class="auth-input" id="registerPassword" type="password" autocomplete="new-password" placeholder="6 أحرف على الأقل" minlength="6" required>
+      <label class="auth-label" for="registerPassword2">تأكيد كلمة المرور</label>
+      <input class="auth-input" id="registerPassword2" type="password" autocomplete="new-password" placeholder="أعد كتابة كلمة المرور" minlength="6" required>
+      <button class="auth-submit" type="submit">إنشاء الحساب</button>
+    </form>
+
+    <div class="auth-message" id="authMessage" aria-live="polite"></div>
+    <div class="auth-note">هذا الإصدار يحفظ الحساب محليًا على هذا الجهاز. الحساب الحقيقي بين الأجهزة يحتاج إلى خادم وقاعدة بيانات.</div>
+  </div>
+</section>
+
+<!-- القائمة الجانبية -->
+<div class="overlay" id="overlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="brand-small">ORCA AI</div>
+    <button class="icon-btn" id="closeSidebar" type="button" aria-label="إغلاق القائمة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  
+  <button class="new-chat-btn" id="newChatSidebar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </svg>
+    محادثة جديدة
+  </button>
+
+  <div class="sidebar-title">المحادثات السابقة</div>
+  <div class="sidebar-list" id="sidebarList">
+    <!-- يتم تعبئتها بالجافاسكربت -->
+  </div>
+  <div class="account-bar">
+    <span class="account-email" id="accountEmail"></span>
+    <button class="logout-btn" id="logoutBtn" type="button">خروج</button>
+  </div>
+</aside>
+
+<div class="app">
+
+  <header>
+    <button class="icon-btn" id="sidebarToggle" type="button" title="القائمة" aria-label="القائمة">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
+    <div class="brand">
+      ORCA AI
+      <small>مساحة محادثة هادئة</small>
+    </div>
+
+    <div class="model-wrap" id="modelWrap">
+      <button class="model-btn" id="modelBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
+        <span class="dot"></span>
+        <span id="modelLabel">OA 1.0 Flash</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="model-menu" id="modelMenu" role="listbox" aria-label="اختيار النموذج"></div>
+    </div>
+  </header>
+
+  <main class="chat" id="chat">
+    <section class="empty" id="empty">
+      <h1>كيف أساعدك اليوم؟</h1>
+      <p>اكتب سؤالك في المساحة أدناه، أو ابدأ بأحد هذه الاقتراحات.</p>
+      <div class="suggestions" id="suggestions"></div>
+    </section>
+  </main>
+
+  <div class="composer-area">
+    <form class="composer" id="form" autocomplete="off">
+      <textarea id="input" rows="1" placeholder="اكتب رسالتك…" aria-label="نص الرسالة"></textarea>
+      <button class="send" id="send" type="submit" disabled aria-label="إرسال">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"/>
+          <polyline points="5 12 12 5 19 12"/>
+        </svg>
+      </button>
+    </form>
+    <div class="footnote">يعمل الآن بالذكاء الاصطناعي الحقيقي عبر Groq.</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   إعداد الاتصال بالخدمة (اختياري)
+   ============================================================ */
+const CONFIG = {
+  endpoint: "https://api.groq.com/openai/v1/chat/completions",
+  apiKey: "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",
+  model: "openai/gpt-oss-120b"
+};
+
+/* ============ النموذج الوحيد ============ */
+const MODELS = {
+  "gpt-oss-120b": { name: "OA 1.0 Flash", desc: "مساعد قوي للبرمجة والاستدلال" }
+};
+
+/* ============ الاقتراحات ============ */
+const SUGGESTIONS = [
+  "اكتب لي فقرة قصيرة عن الهدوء",
+  "لخّص فكرة مشروع في ثلاث نقاط",
+  "اقترح ثلاثة عناوين لمقال",
+  "اكتب كود HTML لصفحة بسيطة"
+];
+
+/* ============ العناصر ============ */
+const chat        = document.getElementById("chat");
+const empty       = document.getElementById("empty");
+const form        = document.getElementById("form");
+const input       = document.getElementById("input");
+const sendBtn     = document.getElementById("send");
+const modelWrap   = document.getElementById("modelWrap");
+const modelBtn    = document.getElementById("modelBtn");
+const modelMenu   = document.getElementById("modelMenu");
+const modelLabel  = document.getElementById("modelLabel");
+const sidebar     = document.getElementById("sidebar");
+const overlay     = document.getElementById("overlay");
+const sidebarList = document.getElementById("sidebarList");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const newChatSidebar = document.getElementById("newChatSidebar");
+const closeSidebar = document.getElementById("closeSidebar");
+const authScreen = document.getElementById("authScreen");
+const loginTab = document.getElementById("loginTab");
+const registerTab = document.getElementById("registerTab");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
+const authMessage = document.getElementById("authMessage");
+const loginEmail = document.getElementById("loginEmail");
+const accountEmail = document.getElementById("accountEmail");
+const logoutBtn = document.getElementById("logoutBtn");
+
+/* ============ الحالة ============ */
+const state = {
+  model: "gpt-oss-120b",
+  messages: [],
+  busy: false,
+  history: [],
+  currentChatId: null,
+  userEmail: localStorage.getItem('orca_current_user') || null
+};
+
+/* ============ الحسابات المحلية ============ */
+const USERS_KEY = 'orca_users_v1';
+
+function getUsers(){
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
+  catch (_) { return []; }
+}
+
+async function hashPassword(password){
+  if (window.crypto?.subtle) {
+    const data = new TextEncoder().encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+  // fallback for restricted WebView/file environments
+  let h = 2166136261;
+  for (let i = 0; i < password.length; i++) {
+    h ^= password.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return 'fallback-' + (h >>> 0).toString(16);
+}
+
+function normalizeEmail(email){ return String(email).trim().toLowerCase(); }
+
+function setAuthMessage(text, error=false){
+  authMessage.textContent = text;
+  authMessage.classList.toggle('error', error);
+}
+
+function showAuthTab(tab){
+  const register = tab === 'register';
+  loginTab.classList.toggle('active', !register);
+  registerTab.classList.toggle('active', register);
+  loginForm.hidden = register;
+  registerForm.hidden = !register;
+  setAuthMessage('');
+}
+
+function showApp(){
+  authScreen.hidden = true;
+  accountEmail.textContent = state.userEmail || '';
+  loadHistoryFromStorage();
+  renderSidebarList();
+}
+
+function showAuth(){
+  authScreen.hidden = false;
+  setAuthMessage('');
+  loginEmail.focus();
+}
+
+loginTab.addEventListener('click', () => showAuthTab('login'));
+registerTab.addEventListener('click', () => showAuthTab('register'));
+
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = normalizeEmail(document.getElementById('registerEmail').value);
+  const password = document.getElementById('registerPassword').value;
+  const password2 = document.getElementById('registerPassword2').value;
+  if (!email || !email.includes('@')) return setAuthMessage('أدخل بريدًا إلكترونيًا صحيحًا.', true);
+  if (password.length < 6) return setAuthMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل.', true);
+  if (password !== password2) return setAuthMessage('كلمتا المرور غير متطابقتين.', true);
+  const users = getUsers();
+  if (users.some(u => u.email === email)) return setAuthMessage('هذا البريد مسجل بالفعل. سجّل الدخول.', true);
+  users.push({ email, passwordHash: await hashPassword(password), createdAt: Date.now() });
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  state.userEmail = email;
+  localStorage.setItem('orca_current_user', email);
+  state.history = [];
+  state.messages = [];
+  state.currentChatId = null;
+  showApp();
+  input.focus();
+});
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = normalizeEmail(document.getElementById('loginEmail').value);
+  const password = document.getElementById('loginPassword').value;
+  const user = getUsers().find(u => u.email === email);
+  if (!user || user.passwordHash !== await hashPassword(password)) {
+    return setAuthMessage('البريد الإلكتروني أو كلمة المرور غير صحيحة.', true);
+  }
+  state.userEmail = email;
+  localStorage.setItem('orca_current_user', email);
+  showApp();
+  input.focus();
+});
+
+logoutBtn.addEventListener('click', () => {
+  if (state.busy) return;
+  localStorage.removeItem('orca_current_user');
+  state.userEmail = null;
+  state.history = [];
+  state.messages = [];
+  state.currentChatId = null;
+  chat.querySelectorAll('.row').forEach(r => r.remove());
+  empty.hidden = false;
+  closeSidebarMenu();
+  showAuthTab('login');
+  showAuth();
+});
+
+/* ============ تحميل المحادثات السابقة ============ */
+function loadHistoryFromStorage() {
+  try {
+    const saved = localStorage.getItem('orca_chat_history_' + state.userEmail);
+    if (saved) {
+      state.history = JSON.parse(saved);
+    }
+  } catch (e) {
+    state.history = [];
+  }
+}
+
+/* ============ بناء قائمة النماذج ============ */
+function buildModelMenu(){
+  Object.entries(MODELS).forEach(([key, m]) => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "model-item";
+    item.dataset.key = key;
+    item.setAttribute("role", "option");
+    item.setAttribute("aria-selected", String(key === state.model));
+
+    const name = document.createElement("span");
+    name.className = "mi-name";
+    name.textContent = m.name;
+
+    const desc = document.createElement("span");
+    desc.className = "mi-desc";
+    desc.textContent = m.desc;
+
+    item.appendChild(name);
+    item.appendChild(desc);
+    item.addEventListener("click", () => {
+      setModel(key);
+      closeMenu();
+      input.focus();
+    });
+
+    modelMenu.appendChild(item);
+  });
+}
+
+function setModel(key){
+  state.model = key;
+  modelLabel.textContent = MODELS[key].name;
+  modelMenu.querySelectorAll(".model-item").forEach(el => {
+    el.setAttribute("aria-selected", String(el.dataset.key === key));
+  });
+}
+
+function openMenu(){
+  modelWrap.classList.add("open");
+  modelBtn.setAttribute("aria-expanded", "true");
+}
+function closeMenu(){
+  modelWrap.classList.remove("open");
+  modelBtn.setAttribute("aria-expanded", "false");
+}
+function toggleMenu(){
+  modelWrap.classList.contains("open") ? closeMenu() : openMenu();
+}
+
+modelBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  toggleMenu();
+});
+document.addEventListener("click", (e) => {
+  if (!modelWrap.contains(e.target)) closeMenu();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeMenu();
+});
+
+/* ============ القائمة الجانبية ============ */
+function openSidebar() {
+  sidebar.classList.add("open");
+  overlay.classList.add("active");
+  renderSidebarList();
+}
+function closeSidebarMenu() {
+  sidebar.classList.remove("open");
+  overlay.classList.remove("active");
+}
+
+sidebarToggle.addEventListener("click", openSidebar);
+closeSidebar.addEventListener("click", closeSidebarMenu);
+overlay.addEventListener("click", closeSidebarMenu);
+
+newChatSidebar.addEventListener("click", () => {
+  startNewChat();
+  closeSidebarMenu();
+});
+
+/* عرض قائمة المحادثات الحقيقية */
+function renderSidebarList() {
+  sidebarList.innerHTML = '';
+  if (state.history.length === 0) {
+    const p = document.createElement('div');
+    p.className = 'empty-history';
+    p.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+      لا توجد محادثات سابقة
+    `;
+    sidebarList.appendChild(p);
+    return;
+  }
+
+  // الأحدث أولاً
+  const sorted = [...state.history].reverse();
+  sorted.forEach(chatData => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chat-item";
+
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "ci-content";
+
+    const titleSpan = document.createElement("span");
+    titleSpan.className = "ci-title";
+    titleSpan.textContent = chatData.title;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.className = "ci-time";
+    timeSpan.textContent = chatData.time;
+
+    contentDiv.appendChild(titleSpan);
+    contentDiv.appendChild(timeSpan);
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-chat-btn";
+    deleteBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </svg>
+    `;
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteChat(chatData.id);
+    });
+
+    btn.appendChild(contentDiv);
+    btn.appendChild(deleteBtn);
+
+    btn.addEventListener("click", () => {
+      loadChat(chatData.id);
+      closeSidebarMenu();
+    });
+
+    sidebarList.appendChild(btn);
+  });
+}
+
+/* حذف محادثة */
+function deleteChat(id) {
+  state.history = state.history.filter(c => c.id !== id);
+  localStorage.setItem('orca_chat_history_' + state.userEmail, JSON.stringify(state.history));
+  renderSidebarList();
+  
+  // إذا كانت المحادثة الحالية هي المحذوفة، ابدأ محادثة جديدة
+  if (state.currentChatId === id) {
+    startNewChat();
+  }
+}
+
+/* تحميل محادثة سابقة */
+function loadChat(id) {
+  const chatData = state.history.find(c => c.id === id);
+  if (!chatData) return;
+
+  state.currentChatId = chatData.id;
+  state.messages = [...chatData.messages];
+
+  // مسح منطقة المحادثة
+  chat.querySelectorAll(".row").forEach(r => r.remove());
+  empty.hidden = true;
+
+  // إعادة بناء الرسائل
+  state.messages.forEach(msg => {
+    addMessage(msg.role, msg.content, false);
+  });
+
+  input.focus();
+}
+
+/* حفظ المحادثة الحالية */
+function saveCurrentChat() {
+  if (state.messages.length === 0) return;
+
+  let chatData = state.history.find(c => c.id === state.currentChatId);
+
+  if (!chatData) {
+    // إنشاء محادثة جديدة
+    const firstMsg = state.messages[0].content;
+    const title = firstMsg.length > 25 ? firstMsg.substring(0, 25) + "…" : firstMsg;
+    chatData = {
+      id: state.currentChatId,
+      title: title,
+      messages: [...state.messages],
+      time: new Date().toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' })
+    };
+    state.history.push(chatData);
+  } else {
+    // تحديث محادثة موجودة
+    chatData.messages = [...state.messages];
+    chatData.time = new Date().toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  localStorage.setItem('orca_chat_history_' + state.userEmail, JSON.stringify(state.history));
+}
+
+/* ============ الاقتراحات ============ */
+function buildSuggestions(){
+  const box = document.getElementById("suggestions");
+  SUGGESTIONS.forEach(text => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip";
+    b.textContent = text;
+    b.addEventListener("click", () => {
+      input.value = text;
+      autoGrow();
+      updateSend();
+      handleSend();
+    });
+    box.appendChild(b);
+  });
+}
+
+/* ============ أدوات مساعدة ============ */
+function scrollToBottom(){
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function autoGrow(){
+  input.style.height = "auto";
+  input.style.height = Math.min(input.scrollHeight, 168) + "px";
+}
+
+function updateSend(){
+  sendBtn.disabled = state.busy || input.value.trim().length === 0;
+}
+
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+/* ============ تنسيق الكود (Markdown Parser) ============ */
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function highlightCode(code, lang) {
+  let escaped = escapeHtml(code);
+  if (lang === 'html' || lang === 'xml') {
+    // Tags
+    escaped = escaped.replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="hljs-tag">$2</span>');
+    // Attributes
+    escaped = escaped.replace(/([\w-]+)=(&quot;.*?&quot;|'.*?')/g, '<span class="hljs-attr">$1</span>=<span class="hljs-string">$2</span>');
+    // Comments
+    escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hljs-comment">$1</span>');
+  } else if (lang === 'css') {
+    // Selectors
+    escaped = escaped.replace(/([.#]?[\w-]+)(\s*\{)/g, '<span class="hljs-tag">$1</span>$2');
+    // Properties
+    escaped = escaped.replace(/([\w-]+):/g, '<span class="hljs-attr">$1</span>:');
+    // Values
+    escaped = escaped.replace(/(:.*?;)/g, '<span class="hljs-string">$1</span>');
+  } else if (lang === 'js' || lang === 'javascript') {
+    // Keywords
+    escaped = escaped.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|default|async|await)\b/g, '<span class="hljs-keyword">$1</span>');
+    // Strings
+    escaped = escaped.replace(/(&quot;.*?&quot;|'.*?')/g, '<span class="hljs-string">$1</span>');
+    // Comments
+    escaped = escaped.replace(/(\/\/.*)/g, '<span class="hljs-comment">$1</span>');
+  }
+  return escaped;
+}
+
+function formatMessage(text) {
+  // Split by triple backticks
+  const parts = text.split('```');
+  let result = '';
+  parts.forEach((part, index) => {
+    if (index % 2 === 0) {
+      // Normal text
+      if (part) {
+        result += escapeHtml(part).replace(/\n/g, '<br>');
+      }
+    } else {
+      // Code block
+      const lines = part.split('\n');
+      const lang = lines[0].trim() || 'code';
+      const code = lines.slice(1).join('\n');
+      const highlighted = highlightCode(code, lang);
+      
+      // Check if this is a complete code block
+      const isComplete = !(index === parts.length - 1 && !text.endsWith('```'));
+      
+      const copyIcon = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+          <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path>
+        </svg>`;
+      result += `
+      <div class="code-block">
+          <div class="code-header">
+              <span class="code-language">${lang.toUpperCase()}</span>
+              <button class="copy-btn" type="button" ${isComplete ? '' : 'disabled'} aria-label="نسخ الكود">${copyIcon}<span>نسخ</span></button>
+          </div>
+          <pre><code>${highlighted}</code></pre>
+      </div>`;
+    }
+  });
+  return result;
+}
+
+/* ============ إضافة الرسائل ============ */
+function addMessage(role, text, animate = true){
+  if (!empty.hidden) empty.hidden = true;
+
+  const row = document.createElement("div");
+  row.className = "row " + role;
+  if (!animate) row.style.animation = "none";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+  
+  if (role === "assistant") {
+    bubble.innerHTML = formatMessage(text);
+  } else {
+    bubble.textContent = text;
+  }
+
+  row.appendChild(bubble);
+  chat.appendChild(row);
+  if (animate) scrollToBottom();
+  return bubble;
+}
+
+function showTyping(){
+  if (!empty.hidden) empty.hidden = true;
+
+  const row = document.createElement("div");
+  row.className = "row assistant";
+
+  const t = document.createElement("div");
+  t.className = "typing";
+  t.innerHTML = "<span></span><span></span><span></span>";
+
+  row.appendChild(t);
+  chat.appendChild(row);
+  scrollToBottom();
+  return row;
+}
+
+/* تحديث دالة الكتابة لتعرض الكود أثناء الكتابة */
+function typeInto(el, text){
+  return new Promise(resolve => {
+    let i = 0;
+    const total = text.length;
+    const step = Math.max(1, Math.round(total / 190));
+
+    const id = setInterval(() => {
+      i += step;
+      if (i >= total){
+        clearInterval(id);
+        el.innerHTML = formatMessage(text);
+        scrollToBottom();
+        resolve();
+        return;
+      }
+      // إعادة تنسيق النص أثناء الكتابة لعرض كتل الكود مباشرة
+      el.innerHTML = formatMessage(text.slice(0, i));
+      scrollToBottom();
+    }, 18);
+  });
+}
+
+/* ============ توليد الرد ============ */
+async function generateReply(){
+  if (!CONFIG.endpoint || !CONFIG.apiKey){
+    return simulateReply(state.messages[state.messages.length - 1].content);
+  }
+
+  try {
+    const messages = [
+      {
+        role: "system",
+        content: 'أنت OA 1.0 Flash، مساعد ذكي داخل ORCA AI. أجب مباشرة وبوضوح، وكن قويًا في البرمجة وإنشاء HTML وCSS وJavaScript. عند طلب الكود، استخدم fenced code blocks مع تحديد اللغة مثل ```html. لا تذكر اسم النموذج أو الشركة أو مزود الخدمة أو أي معلومات عن هويتك التقنية من تلقاء نفسك، ولا تقل عبارات مثل "أنا نموذج ذكاء اصطناعي" أو "أنا من شركة كذا" أو "أنا تابع لشركة كذا" بدون أن يسأل المستخدم عن ذلك. لا تخترع شركة أو جهة أو معلومات غير مؤكدة. إذا سأل المستخدم مباشرة عن اسمك أو هويتك، قل باختصار إن اسمك OA 1.0 Flash داخل ORCA AI، وإذا سأل عن الشركة أو المزود فلا تخترع إجابة. لا تقل إنك تعمل محليًا ولا تدّعي أنك غير متصل بالخدمة. ركّز على الإجابة نفسها ولا تضف تعريفًا بنفسك في بداية الرد بدون سبب.' 
+      },
+      ...state.messages.map(m => ({ role: m.role, content: m.content }))
+    ];
+
+    const res = await fetch(CONFIG.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + CONFIG.apiKey
+      },
+      body: JSON.stringify({
+        model: CONFIG.model,
+        messages,
+        max_tokens: 4096
+      })
+    });
+
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+
+    if (!res.ok) {
+      const apiMessage = data?.error?.message || data?.message || "خطأ غير معروف من Groq";
+      return `تعذّر الحصول على الرد من Groq.\n\n${apiMessage}`;
+    }
+
+    const out = data?.choices?.[0]?.message?.content ?? data?.content?.[0]?.text ?? data?.reply;
+    if (out) return String(out).trim();
+    return "لم يصل رد صالح من النموذج.";
+  } catch (err){
+    return "تعذّر الاتصال بخدمة Groq. تأكد من اتصال الإنترنت وأن مفتاح API صالح.";
+  }
+}
+
+function simulateReply(raw){
+  const m = MODELS[state.model];
+  const q = String(raw).trim();
+  const low = q.toLowerCase();
+  const has = (...keys) => keys.some(k => low.includes(k));
+
+  if (has("مرحب", "السلام", "أهلا", "اهلا", "صباح", "مساء", "hi", "hello")){
+    return `أهلًا بك. أنا ${m.name}، وجاهز للمساعدة.\n\nاكتب سؤالك مباشرة، أو اطلب منّي صياغة نصّ أو تلخيص فكرة، وسأرتّب الإجابة بوضوح.`;
+  }
+
+  if (has("من أنت", "من انت", "اسمك", "ما اسمك")){
+    return `أنا ${m.name}، نموذج محادثة ضمن هذه الواجهة.\n\n${m.desc}.`;
+  }
+
+  if (has("لخص", "لخّص", "تلخيص", "اختصر")){
+    return `سأرتّب الخلاصة في ثلاث نقاط:\n\n١. الفكرة الأساسية واضحة، ويمكن تقديمها في جملة واحدة.\n٢. التفاصيل الثانوية تُؤجَّل إلى فقرة تالية حتى لا تُربك القارئ.\n٣. النتيجة تُوضع في النهاية، بصيغة عملية قابلة للتنفيذ.\n\nأرسل النصّ كاملًا وأعيد صياغته على هذا الترتيب.`;
+  }
+
+  if (has("عنوان", "عناوين")){
+    return `ثلاثة عناوين مقترحة:\n\n١. الهدوء كاختيار، لا كظرف.\n٢. في مدح البطء.\n٣. ما تبقّى بعد أن تُغلق الأبواب.\n\nاختر واحدًا وسأبني حوله مطلعًا من فقرتين.`;
+  }
+
+  if (has("كود", "html", "css", "javascript", "برمجة")){
+    return `بالتأكيد، هذا مثال بسيط لصفحة HTML:\n\n\`\`\`html\n<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <title>صفحتي الأولى</title>\n</head>\n<body>\n  <h1>مرحباً بالعالم!</h1>\n  <p>هذه أول صفحة ويب لي.</p>\n</body>\n</html>\n\`\`\`\n\nيمكنك نسخ الكود وتجربته في متصفحك.`;
+  }
+
+  if (has("اكتب", "فقرة", "مقال", "نص")){
+    return `تفضّل:\n\nالهدوء ليس غياب الصوت، بل قدرة على الانتقال بين الأصوات دون أن تفقد نفسك. يتعلّم المرء أن يترك ضجيجًا خلفه، لا لأنه يكرهه، بل لأنه صار يعرف ما يستحقّ أن يُسمَع. وفي هذا الاختيار الصغير، يتشكّل يومٌ كامل.\n\nأخبرني إن أردت النصّ أقصر أو بنبرة مختلفة.`;
+  }
+
+  return `فهمت ما طرحته: «${q.length > 90 ? q.slice(0, 90) + "…" : q}».\n\nهذه واجهة تجريبية تعمل محليًا دون اتصال بخدمة ذكاء اصطناعي، لذلك لا أستطيع توليد إجابة حقيقية بعد.\n\nلتشغيل الردود الفعلية: ضع رابط الخدمة ومفتاح الوصول في كائن الإعدادات أعلى الشيفرة، وسيتحوّل المسار تلقائيًا إلى الاتصال الحقيقي.`;
+}
+
+/* ============ إرسال ============ */
+async function handleSend(){
+  const text = input.value.trim();
+  if (!text || state.busy) return;
+
+  state.busy = true;
+  input.value = "";
+  autoGrow();
+  updateSend();
+
+  // إن كانت هذه أول رسالة، أنشئ معرف محادثة جديد
+  if (state.messages.length === 0) {
+    state.currentChatId = Date.now().toString();
+  }
+
+  addMessage("user", text);
+  state.messages.push({ role: "user", content: text });
+  saveCurrentChat(); // حفظ فوري بعد رسالة المستخدم
+
+  const typing = showTyping();
+  await wait(420 + Math.random() * 420);
+  typing.remove();
+
+  const reply = await generateReply();
+
+  const el = addMessage("assistant", "");
+  state.messages.push({ role: "assistant", content: reply });
+  await typeInto(el, reply);
+
+  saveCurrentChat(); // حفظ بعد رد الذكاء الاصطناعي
+
+  state.busy = false;
+  updateSend();
+  input.focus();
+}
+
+/* ============ محادثة جديدة ============ */
+function startNewChat() {
+  if (state.busy) return;
+  state.messages = [];
+  state.currentChatId = null;
+  chat.querySelectorAll(".row").forEach(r => r.remove());
+  empty.hidden = false;
+  input.value = "";
+  autoGrow();
+  updateSend();
+  closeMenu();
+  input.focus();
+}
+
+/* ============ الأحداث ============ */
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  handleSend();
+});
+
+input.addEventListener("input", () => {
+  autoGrow();
+  updateSend();
+});
+
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    handleSend();
+  }
+});
+
+/* ============ نسخ الكود — يعمل أيضاً داخل WebView و content:// ============ */
+async function copyTextRobust(text){
+  if (!text) return false;
+
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_) {}
+  }
+
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.setAttribute('readonly', '');
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.left = '-9999px';
+  ta.style.opacity = '0';
+  ta.style.pointerEvents = 'none';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0, ta.value.length);
+
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+  ta.remove();
+  return ok;
+}
+
+chat.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.copy-btn');
+  if (!btn || btn.disabled) return;
+
+  const codeBlock = btn.closest('.code-block');
+  const codeElement = codeBlock?.querySelector('code');
+  if (!codeElement) return;
+
+  const original = btn.innerHTML;
+  const code = codeElement.textContent.replace(/\n$/, '');
+  btn.disabled = true;
+
+  const ok = await copyTextRobust(code);
+  if (ok) {
+    btn.classList.add('copied');
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg><span>تم النسخ</span>`;
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.classList.remove('copied');
+      btn.disabled = false;
+    }, 1600);
+  } else {
+    btn.innerHTML = '<span>فشل النسخ</span>';
+    setTimeout(() => {
+      btn.innerHTML = original;
+      btn.disabled = false;
+    }, 1600);
+  }
+});
+
+/* ============ التهيئة ============ */
+buildModelMenu();
+buildSuggestions();
+setModel("gpt-oss-120b");
+updateSend();
+if (state.userEmail) {
+  showApp();
+  input.focus();
+} else {
+  showAuth();
+}
+</script>
+</body>
+</html>
