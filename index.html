@@ -253,46 +253,6 @@
     height: 14px;
   }
 
-  /* ============ تسجيل الدخول والحساب ============ */
-  .auth-screen{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    background:#11100f;
-  }
-  .auth-screen[hidden]{display:none}
-  .auth-card{
-    width:min(420px,100%);
-    padding:30px 24px 24px;
-    border:1px solid rgba(237,232,227,.10);
-    border-radius:24px;
-    background:linear-gradient(180deg,#24211f,#1c1a18);
-    box-shadow:0 25px 80px rgba(0,0,0,.55);
-  }
-  .auth-logo{font-family:var(--serif);font-size:30px;font-weight:700;text-align:center;color:var(--text)}
-  .auth-subtitle{text-align:center;color:var(--muted);font-size:13px;margin:5px 0 24px}
-  .auth-tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#181614;border-radius:12px;margin-bottom:20px}
-  .auth-tab{border:0;background:transparent;color:var(--muted);padding:10px;border-radius:9px;font-family:var(--sans);cursor:pointer;font-size:13px}
-  .auth-tab.active{background:#2c2825;color:var(--text)}
-  .auth-form{display:flex;flex-direction:column;gap:12px}
-  .auth-form[hidden]{display:none}
-  .auth-label{font-size:12px;color:#b8b0a8;margin-bottom:-5px}
-  .auth-input{width:100%;height:46px;border:1px solid rgba(237,232,227,.11);border-radius:12px;background:#181614;color:var(--text);padding:0 13px;outline:none;font-family:var(--sans);font-size:14px;direction:ltr;text-align:left}
-  .auth-input:focus{border-color:rgba(201,102,63,.55);box-shadow:0 0 0 3px rgba(201,102,63,.08)}
-  .auth-submit{height:46px;border:0;border-radius:12px;background:var(--accent);color:#171310;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;margin-top:4px}
-  .auth-submit:active{transform:translateY(1px)}
-  .auth-message{min-height:20px;text-align:center;color:#c7bfb8;font-size:12px;line-height:1.6;margin-top:10px}
-  .auth-message.error{color:#d98b7a}
-  .auth-note{text-align:center;color:#6f6862;font-size:10.5px;line-height:1.7;margin-top:14px}
-  .account-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-top:1px solid rgba(237,232,227,.06);color:var(--dim);font-size:11px}
-  .account-email{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:left}
-  .logout-btn{border:1px solid rgba(237,232,227,.09);background:transparent;color:var(--muted);border-radius:9px;padding:7px 10px;font-family:var(--sans);font-size:11px;cursor:pointer}
-  .logout-btn:hover{background:rgba(255,255,255,.05);color:var(--text)}
-
   /* ============ التطبيق ============ */
   .app{
     position:relative;
@@ -366,9 +326,6 @@
   .model-btn{
     display:inline-flex;
     align-items:center;
-    flex-wrap:nowrap;
-    white-space:nowrap;
-    direction:ltr;
     gap:8px;
     height:36px;
     padding:0 14px;
@@ -381,10 +338,9 @@
     font-weight:500;
     cursor:pointer;
     transition:background .2s ease,border-color .2s ease,box-shadow .2s ease;
+    white-space:nowrap;
     box-shadow: 0 2px 10px rgba(0,0,0,0.15);
   }
-  #modelLabel{white-space:nowrap;display:inline-block;line-height:1;direction:ltr}
-  .model-btn .dot{position:relative;top:0;align-self:center}
   .model-btn:hover{
     background:var(--surface-3);
     border-color:rgba(201,102,63,.35);
@@ -523,115 +479,67 @@
     color:#E6E0DA;
   }
 
-  /* ============ كتلة الكود — ستايل فاخر قريب من Claude ============ */
-  .code-block{
-    position:relative;
-    width:100%;
-    margin:18px 0;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.105);
-    border-radius:16px;
-    background:#11100f;
-    direction:ltr;
-    text-align:left;
-    box-shadow:0 10px 28px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.025);
+  /* ============ تصميم كتلة الكود (Claude Style) ============ */
+  .code-block {
+    background: #1a1817;
+    border: 1px solid rgba(237,232,227,.1);
+    border-radius: 12px;
+    margin: 15px 0;
+    overflow: hidden;
+    direction: ltr;
+    font-family: var(--mono);
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    text-align: left;
   }
-
-  .code-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    min-height:48px;
-    padding:8px 10px 8px 14px;
-    background:rgba(255,255,255,.035);
-    border-bottom:1px solid rgba(255,255,255,.07);
-    color:#aaa39c;
-    font-family:var(--sans);
+  .code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 14px;
+    background: #252120;
+    border-bottom: 1px solid rgba(237,232,227,.08);
+    font-size: 11px;
+    color: #7B736C;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
-
-  .code-language{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    min-width:0;
-    font-size:11px;
-    font-weight:600;
-    letter-spacing:.65px;
-    text-transform:uppercase;
-    color:#b8b1aa;
+  .copy-btn {
+    background: rgba(237,232,227,.05);
+    border: 1px solid rgba(237,232,227,.1);
+    color: #A79F97;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: all .2s;
+    font-family: var(--sans);
   }
-
-  .code-language::before{
-    content:"";
-    width:7px;
-    height:7px;
-    border-radius:50%;
-    background:#7f776f;
-    box-shadow:0 0 0 3px rgba(127,119,111,.10);
-    flex:0 0 auto;
+  .copy-btn:hover:not(:disabled) {
+    background: rgba(237,232,227,.15);
+    color: #EDE8E3;
+    border-color: rgba(237,232,227,.25);
   }
-
-  .copy-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:7px;
-    height:32px;
-    min-width:72px;
-    padding:0 10px;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius:9px;
-    background:rgba(255,255,255,.045);
-    color:#b5ada5;
-    cursor:pointer;
-    font-family:var(--sans);
-    font-size:11.5px;
-    font-weight:500;
-    transition:background .18s ease,color .18s ease,border-color .18s ease,transform .12s ease;
-    -webkit-tap-highlight-color:transparent;
+  .copy-btn:active:not(:disabled) {
+    transform: scale(0.97);
   }
-
-  .copy-btn svg{width:14px;height:14px;flex:0 0 auto}
-  .copy-btn:hover:not(:disabled){background:rgba(255,255,255,.085);color:#eee9e4;border-color:rgba(255,255,255,.17)}
-  .copy-btn:active:not(:disabled){transform:scale(.97)}
-  .copy-btn.copied{color:#d7d0ca;border-color:rgba(190,190,190,.22);background:rgba(190,190,190,.08)}
-  .copy-btn:disabled{opacity:.42;cursor:default}
-
-  .code-block pre{
-    margin:0;
-    padding:18px 18px 20px;
-    overflow-x:auto;
-    overflow-y:hidden;
-    min-height:0;
-    max-height:560px;
-    overscroll-behavior-x:contain;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:thin;
-    scrollbar-color:rgba(255,255,255,.11) transparent;
+  .copy-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
   }
-  .code-block pre::-webkit-scrollbar{height:7px}
-  .code-block pre::-webkit-scrollbar-track{background:transparent}
-  .code-block pre::-webkit-scrollbar-thumb{background:rgba(255,255,255,.11);border-radius:999px}
-
-  .code-block code{
-    display:block;
-    width:max-content;
-    min-width:100%;
-    margin:0;
-    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-    font-size:13px;
-    color:#d6d2ce;
-    line-height:1.72;
-    tab-size:2;
-    white-space:pre;
+  .code-block pre {
+    margin: 0;
+    padding: 16px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(237,232,227,.1) transparent;
   }
-
-  @media (max-width:640px){
-    .code-block{border-radius:15px;margin:16px 0}
-    .code-header{min-height:46px;padding:7px 9px 7px 12px}
-    .copy-btn{height:31px;min-width:68px;padding:0 9px}
-    .code-block pre{padding:16px 14px 18px;max-height:500px}
-    .code-block code{font-size:12.5px;line-height:1.68}
+  .code-block pre::-webkit-scrollbar { height: 6px; }
+  .code-block pre::-webkit-scrollbar-thumb { background: rgba(237,232,227,.1); border-radius: 99px; }
+  .code-block code {
+    font-family: var(--mono);
+    color: #ABB2BF;
+    line-height: 1.6;
   }
 
   /* Syntax Highlighting */
@@ -782,49 +690,134 @@
     border-radius:6px;
   }
 
+  /* ============ نافذة النسخ الاحتياطية ============ */
+  .copy-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .25s ease, visibility .25s;
+  }
+  .copy-modal.active {
+    opacity: 1;
+    visibility: visible;
+  }
+  .copy-modal-content {
+    background: #1F1C1A;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border: 1px solid rgba(237,232,227,.12);
+    border-bottom: 0;
+    width: 100%;
+    max-width: 780px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 18px calc(18px + env(safe-area-inset-bottom));
+    transform: translateY(30px);
+    transition: transform .25s ease;
+  }
+  .copy-modal.active .copy-modal-content {
+    transform: translateY(0);
+  }
+  .copy-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(237,232,227,.08);
+  }
+  .copy-modal-header span {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .copy-modal-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+  }
+  .copy-modal-close:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+  .copy-modal-hint {
+    font-size: 12px;
+    color: var(--dim);
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .copy-modal-textarea {
+    flex: 1;
+    min-height: 180px;
+    max-height: 45vh;
+    width: 100%;
+    background: #161413;
+    border: 1px solid rgba(237,232,227,.1);
+    border-radius: 12px;
+    padding: 14px;
+    color: #ABB2BF;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.6;
+    direction: ltr;
+    text-align: left;
+    resize: none;
+    outline: none;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(237,232,227,.1) transparent;
+  }
+  .copy-modal-textarea::-webkit-scrollbar { width: 6px; height: 6px; }
+  .copy-modal-textarea::-webkit-scrollbar-thumb { background: rgba(237,232,227,.1); border-radius: 99px; }
+  .copy-modal-textarea:focus {
+    border-color: rgba(201,102,63,.5);
+  }
+
   @media (min-width:640px){
     header{padding:16px 24px}
     .chat{padding:34px 24px 12px}
     .composer-area{padding:12px 24px calc(20px + env(safe-area-inset-bottom))}
     .empty h1{font-size:31px}
     .row{margin-bottom:26px}
+    .copy-modal { align-items: center; }
+    .copy-modal-content {
+      border-radius: 20px;
+      border-bottom: 1px solid rgba(237,232,227,.12);
+      max-width: 640px;
+      padding: 22px;
+      transform: translateY(0) scale(.95);
+    }
+    .copy-modal.active .copy-modal-content {
+      transform: translateY(0) scale(1);
+    }
   }
 </style>
 </head>
 <body>
-
-<!-- شاشة الحساب -->
-<section class="auth-screen" id="authScreen">
-  <div class="auth-card">
-    <div class="auth-logo">ORCA AI</div>
-    <div class="auth-subtitle">سجّل حسابك للبدء</div>
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="loginTab" type="button">تسجيل الدخول</button>
-      <button class="auth-tab" id="registerTab" type="button">إنشاء حساب</button>
-    </div>
-
-    <form class="auth-form" id="loginForm" autocomplete="on">
-      <label class="auth-label" for="loginEmail">البريد الإلكتروني</label>
-      <input class="auth-input" id="loginEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
-      <label class="auth-label" for="loginPassword">كلمة المرور</label>
-      <input class="auth-input" id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
-      <button class="auth-submit" type="submit">دخول</button>
-    </form>
-
-    <form class="auth-form" id="registerForm" autocomplete="on" hidden>
-      <label class="auth-label" for="registerEmail">البريد الإلكتروني</label>
-      <input class="auth-input" id="registerEmail" type="email" autocomplete="email" placeholder="name@example.com" required>
-      <label class="auth-label" for="registerPassword">كلمة المرور</label>
-      <input class="auth-input" id="registerPassword" type="password" autocomplete="new-password" placeholder="6 أحرف على الأقل" minlength="6" required>
-      <label class="auth-label" for="registerPassword2">تأكيد كلمة المرور</label>
-      <input class="auth-input" id="registerPassword2" type="password" autocomplete="new-password" placeholder="أعد كتابة كلمة المرور" minlength="6" required>
-      <button class="auth-submit" type="submit">إنشاء الحساب</button>
-    </form>
-
-    <div class="auth-message" id="authMessage" aria-live="polite"></div>
-    <div class="auth-note">هذا الإصدار يحفظ الحساب محليًا على هذا الجهاز. الحساب الحقيقي بين الأجهزة يحتاج إلى خادم وقاعدة بيانات.</div>
-  </div>
-</section>
 
 <!-- القائمة الجانبية -->
 <div class="overlay" id="overlay"></div>
@@ -846,13 +839,7 @@
   </button>
 
   <div class="sidebar-title">المحادثات السابقة</div>
-  <div class="sidebar-list" id="sidebarList">
-    <!-- يتم تعبئتها بالجافاسكربت -->
-  </div>
-  <div class="account-bar">
-    <span class="account-email" id="accountEmail"></span>
-    <button class="logout-btn" id="logoutBtn" type="button">خروج</button>
-  </div>
+  <div class="sidebar-list" id="sidebarList"></div>
 </aside>
 
 <div class="app">
@@ -874,7 +861,7 @@
     <div class="model-wrap" id="modelWrap">
       <button class="model-btn" id="modelBtn" type="button" aria-haspopup="listbox" aria-expanded="false">
         <span class="dot"></span>
-        <span id="modelLabel">OA 1.0 Flash</span>
+        <span id="modelLabel">Code Lite L1</span>
         <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="6 9 12 15 18 9"/>
         </svg>
@@ -901,24 +888,38 @@
         </svg>
       </button>
     </form>
-    <div class="footnote">يعمل الآن بالذكاء الاصطناعي الحقيقي عبر Groq.</div>
+    <div class="footnote">متصل بنموذج Code Lite L1 — بإنتاج متوازن للكود</div>
   </div>
 
 </div>
 
+<!-- نافذة النسخ الاحتياطية -->
+<div class="copy-modal" id="copyModal">
+  <div class="copy-modal-content">
+    <div class="copy-modal-header">
+      <span>نسخ الكود يدويًا</span>
+      <button class="copy-modal-close" id="copyModalClose" aria-label="إغلاق">×</button>
+    </div>
+    <div class="copy-modal-hint">
+      اضغط مطولًا على النص أدناه، ثم اختر "تحديد الكل" ثم "نسخ"
+    </div>
+    <textarea class="copy-modal-textarea" id="copyModalTextarea" readonly spellcheck="false"></textarea>
+  </div>
+</div>
+
 <script>
 /* ============================================================
-   إعداد الاتصال بالخدمة (اختياري)
+   إعداد الاتصال بخدمة Groq API
    ============================================================ */
 const CONFIG = {
   endpoint: "https://api.groq.com/openai/v1/chat/completions",
-  apiKey: "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",
-  model: "openai/gpt-oss-120b"
+  apiKey: "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",
+  model: "qwen/qwen3.8-27b"
 };
 
 /* ============ النموذج الوحيد ============ */
 const MODELS = {
-  "gpt-oss-120b": { name: "OA 1.0 Flash", desc: "مساعد قوي للبرمجة والاستدلال" }
+  "qwen/qwen3.8-27b": { name: "Code Lite L1", desc: "نموذج سريع متخصص في إنتاج الكود" }
 };
 
 /* ============ الاقتراحات ============ */
@@ -945,134 +946,23 @@ const sidebarList = document.getElementById("sidebarList");
 const sidebarToggle = document.getElementById("sidebarToggle");
 const newChatSidebar = document.getElementById("newChatSidebar");
 const closeSidebar = document.getElementById("closeSidebar");
-const authScreen = document.getElementById("authScreen");
-const loginTab = document.getElementById("loginTab");
-const registerTab = document.getElementById("registerTab");
-const loginForm = document.getElementById("loginForm");
-const registerForm = document.getElementById("registerForm");
-const authMessage = document.getElementById("authMessage");
-const loginEmail = document.getElementById("loginEmail");
-const accountEmail = document.getElementById("accountEmail");
-const logoutBtn = document.getElementById("logoutBtn");
+const copyModal = document.getElementById("copyModal");
+const copyModalClose = document.getElementById("copyModalClose");
+const copyModalTextarea = document.getElementById("copyModalTextarea");
 
 /* ============ الحالة ============ */
 const state = {
-  model: "gpt-oss-120b",
+  model: "qwen/qwen3.8-27b",
   messages: [],
   busy: false,
   history: [],
-  currentChatId: null,
-  userEmail: localStorage.getItem('orca_current_user') || null
+  currentChatId: null
 };
-
-/* ============ الحسابات المحلية ============ */
-const USERS_KEY = 'orca_users_v1';
-
-function getUsers(){
-  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
-  catch (_) { return []; }
-}
-
-async function hashPassword(password){
-  if (window.crypto?.subtle) {
-    const data = new TextEncoder().encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-  // fallback for restricted WebView/file environments
-  let h = 2166136261;
-  for (let i = 0; i < password.length; i++) {
-    h ^= password.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return 'fallback-' + (h >>> 0).toString(16);
-}
-
-function normalizeEmail(email){ return String(email).trim().toLowerCase(); }
-
-function setAuthMessage(text, error=false){
-  authMessage.textContent = text;
-  authMessage.classList.toggle('error', error);
-}
-
-function showAuthTab(tab){
-  const register = tab === 'register';
-  loginTab.classList.toggle('active', !register);
-  registerTab.classList.toggle('active', register);
-  loginForm.hidden = register;
-  registerForm.hidden = !register;
-  setAuthMessage('');
-}
-
-function showApp(){
-  authScreen.hidden = true;
-  accountEmail.textContent = state.userEmail || '';
-  loadHistoryFromStorage();
-  renderSidebarList();
-}
-
-function showAuth(){
-  authScreen.hidden = false;
-  setAuthMessage('');
-  loginEmail.focus();
-}
-
-loginTab.addEventListener('click', () => showAuthTab('login'));
-registerTab.addEventListener('click', () => showAuthTab('register'));
-
-registerForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = normalizeEmail(document.getElementById('registerEmail').value);
-  const password = document.getElementById('registerPassword').value;
-  const password2 = document.getElementById('registerPassword2').value;
-  if (!email || !email.includes('@')) return setAuthMessage('أدخل بريدًا إلكترونيًا صحيحًا.', true);
-  if (password.length < 6) return setAuthMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل.', true);
-  if (password !== password2) return setAuthMessage('كلمتا المرور غير متطابقتين.', true);
-  const users = getUsers();
-  if (users.some(u => u.email === email)) return setAuthMessage('هذا البريد مسجل بالفعل. سجّل الدخول.', true);
-  users.push({ email, passwordHash: await hashPassword(password), createdAt: Date.now() });
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  state.userEmail = email;
-  localStorage.setItem('orca_current_user', email);
-  state.history = [];
-  state.messages = [];
-  state.currentChatId = null;
-  showApp();
-  input.focus();
-});
-
-loginForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = normalizeEmail(document.getElementById('loginEmail').value);
-  const password = document.getElementById('loginPassword').value;
-  const user = getUsers().find(u => u.email === email);
-  if (!user || user.passwordHash !== await hashPassword(password)) {
-    return setAuthMessage('البريد الإلكتروني أو كلمة المرور غير صحيحة.', true);
-  }
-  state.userEmail = email;
-  localStorage.setItem('orca_current_user', email);
-  showApp();
-  input.focus();
-});
-
-logoutBtn.addEventListener('click', () => {
-  if (state.busy) return;
-  localStorage.removeItem('orca_current_user');
-  state.userEmail = null;
-  state.history = [];
-  state.messages = [];
-  state.currentChatId = null;
-  chat.querySelectorAll('.row').forEach(r => r.remove());
-  empty.hidden = false;
-  closeSidebarMenu();
-  showAuthTab('login');
-  showAuth();
-});
 
 /* ============ تحميل المحادثات السابقة ============ */
 function loadHistoryFromStorage() {
   try {
-    const saved = localStorage.getItem('orca_chat_history_' + state.userEmail);
+    const saved = localStorage.getItem('orca_chat_history');
     if (saved) {
       state.history = JSON.parse(saved);
     }
@@ -1178,7 +1068,6 @@ function renderSidebarList() {
     return;
   }
 
-  // الأحدث أولاً
   const sorted = [...state.history].reverse();
   sorted.forEach(chatData => {
     const btn = document.createElement("button");
@@ -1224,19 +1113,15 @@ function renderSidebarList() {
   });
 }
 
-/* حذف محادثة */
 function deleteChat(id) {
   state.history = state.history.filter(c => c.id !== id);
-  localStorage.setItem('orca_chat_history_' + state.userEmail, JSON.stringify(state.history));
+  localStorage.setItem('orca_chat_history', JSON.stringify(state.history));
   renderSidebarList();
-  
-  // إذا كانت المحادثة الحالية هي المحذوفة، ابدأ محادثة جديدة
   if (state.currentChatId === id) {
     startNewChat();
   }
 }
 
-/* تحميل محادثة سابقة */
 function loadChat(id) {
   const chatData = state.history.find(c => c.id === id);
   if (!chatData) return;
@@ -1244,11 +1129,9 @@ function loadChat(id) {
   state.currentChatId = chatData.id;
   state.messages = [...chatData.messages];
 
-  // مسح منطقة المحادثة
   chat.querySelectorAll(".row").forEach(r => r.remove());
   empty.hidden = true;
 
-  // إعادة بناء الرسائل
   state.messages.forEach(msg => {
     addMessage(msg.role, msg.content, false);
   });
@@ -1256,14 +1139,12 @@ function loadChat(id) {
   input.focus();
 }
 
-/* حفظ المحادثة الحالية */
 function saveCurrentChat() {
   if (state.messages.length === 0) return;
 
   let chatData = state.history.find(c => c.id === state.currentChatId);
 
   if (!chatData) {
-    // إنشاء محادثة جديدة
     const firstMsg = state.messages[0].content;
     const title = firstMsg.length > 25 ? firstMsg.substring(0, 25) + "…" : firstMsg;
     chatData = {
@@ -1274,12 +1155,11 @@ function saveCurrentChat() {
     };
     state.history.push(chatData);
   } else {
-    // تحديث محادثة موجودة
     chatData.messages = [...state.messages];
     chatData.time = new Date().toLocaleDateString('ar-EG', { hour: '2-digit', minute: '2-digit' });
   }
 
-  localStorage.setItem('orca_chat_history_' + state.userEmail, JSON.stringify(state.history));
+  localStorage.setItem('orca_chat_history', JSON.stringify(state.history));
 }
 
 /* ============ الاقتراحات ============ */
@@ -1316,7 +1196,7 @@ function updateSend(){
 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
-/* ============ تنسيق الكود (Markdown Parser) ============ */
+/* ============ تنسيق الكود ============ */
 function escapeHtml(unsafe) {
   return unsafe
     .replace(/&/g, "&amp;")
@@ -1329,60 +1209,41 @@ function escapeHtml(unsafe) {
 function highlightCode(code, lang) {
   let escaped = escapeHtml(code);
   if (lang === 'html' || lang === 'xml') {
-    // Tags
     escaped = escaped.replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="hljs-tag">$2</span>');
-    // Attributes
     escaped = escaped.replace(/([\w-]+)=(&quot;.*?&quot;|'.*?')/g, '<span class="hljs-attr">$1</span>=<span class="hljs-string">$2</span>');
-    // Comments
     escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hljs-comment">$1</span>');
   } else if (lang === 'css') {
-    // Selectors
     escaped = escaped.replace(/([.#]?[\w-]+)(\s*\{)/g, '<span class="hljs-tag">$1</span>$2');
-    // Properties
     escaped = escaped.replace(/([\w-]+):/g, '<span class="hljs-attr">$1</span>:');
-    // Values
     escaped = escaped.replace(/(:.*?;)/g, '<span class="hljs-string">$1</span>');
   } else if (lang === 'js' || lang === 'javascript') {
-    // Keywords
     escaped = escaped.replace(/\b(const|let|var|function|return|if|else|for|while|class|import|export|from|default|async|await)\b/g, '<span class="hljs-keyword">$1</span>');
-    // Strings
     escaped = escaped.replace(/(&quot;.*?&quot;|'.*?')/g, '<span class="hljs-string">$1</span>');
-    // Comments
     escaped = escaped.replace(/(\/\/.*)/g, '<span class="hljs-comment">$1</span>');
   }
   return escaped;
 }
 
 function formatMessage(text) {
-  // Split by triple backticks
   const parts = text.split('```');
   let result = '';
   parts.forEach((part, index) => {
     if (index % 2 === 0) {
-      // Normal text
       if (part) {
         result += escapeHtml(part).replace(/\n/g, '<br>');
       }
     } else {
-      // Code block
       const lines = part.split('\n');
       const lang = lines[0].trim() || 'code';
       const code = lines.slice(1).join('\n');
       const highlighted = highlightCode(code, lang);
-      
-      // Check if this is a complete code block
       const isComplete = !(index === parts.length - 1 && !text.endsWith('```'));
       
-      const copyIcon = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <rect x="9" y="9" width="11" height="11" rx="2"></rect>
-          <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path>
-        </svg>`;
       result += `
       <div class="code-block">
           <div class="code-header">
-              <span class="code-language">${lang.toUpperCase()}</span>
-              <button class="copy-btn" type="button" ${isComplete ? '' : 'disabled'} aria-label="نسخ الكود">${copyIcon}<span>نسخ</span></button>
+              <span>${lang.toUpperCase()}</span>
+              <button class="copy-btn" ${isComplete ? '' : 'disabled'}>نسخ</button>
           </div>
           <pre><code>${highlighted}</code></pre>
       </div>`;
@@ -1430,7 +1291,6 @@ function showTyping(){
   return row;
 }
 
-/* تحديث دالة الكتابة لتعرض الكود أثناء الكتابة */
 function typeInto(el, text){
   return new Promise(resolve => {
     let i = 0;
@@ -1446,7 +1306,6 @@ function typeInto(el, text){
         resolve();
         return;
       }
-      // إعادة تنسيق النص أثناء الكتابة لعرض كتل الكود مباشرة
       el.innerHTML = formatMessage(text.slice(0, i));
       scrollToBottom();
     }, 18);
@@ -1455,15 +1314,21 @@ function typeInto(el, text){
 
 /* ============ توليد الرد ============ */
 async function generateReply(){
-  if (!CONFIG.endpoint || !CONFIG.apiKey){
-    return simulateReply(state.messages[state.messages.length - 1].content);
+  if (!CONFIG.apiKey || !CONFIG.endpoint) {
+    return "الرجاء إعداد مفتاح API والرابط في كائن CONFIG أولاً.";
   }
 
   try {
-    const messages = [
-      {
-        role: "system",
-        content: 'أنت OA 1.0 Flash، مساعد ذكي داخل ORCA AI. أجب مباشرة وبوضوح، وكن قويًا في البرمجة وإنشاء HTML وCSS وJavaScript. عند طلب الكود، استخدم fenced code blocks مع تحديد اللغة مثل ```html. لا تذكر اسم النموذج أو الشركة أو مزود الخدمة أو أي معلومات عن هويتك التقنية من تلقاء نفسك، ولا تقل عبارات مثل "أنا نموذج ذكاء اصطناعي" أو "أنا من شركة كذا" أو "أنا تابع لشركة كذا" بدون أن يسأل المستخدم عن ذلك. لا تخترع شركة أو جهة أو معلومات غير مؤكدة. إذا سأل المستخدم مباشرة عن اسمك أو هويتك، قل باختصار إن اسمك OA 1.0 Flash داخل ORCA AI، وإذا سأل عن الشركة أو المزود فلا تخترع إجابة. لا تقل إنك تعمل محليًا ولا تدّعي أنك غير متصل بالخدمة. ركّز على الإجابة نفسها ولا تضف تعريفًا بنفسك في بداية الرد بدون سبب.' 
+    const messagesPayload = [
+      { 
+        role: "system", 
+        content: `أنت مساعد برمجي احترافي ومقتضب. عندما يُطلب منك كتابة كود:
+- اكتب الكود في كتلة كود واحدة فقط دون مقدمات طويلة.
+- اجعل الكود متوسط الحجم: كافياً لأداء الوظيفة المطلوبة بشكل كامل، دون حشو أو اختصار مخل.
+- لا تكتب أكواداً من سطرين فقط، ولا تكتب أكواداً طويلة جداً تحتوي على ميزات غير مطلوبة.
+- التزم بالوظيفة المطلوبة فقط، وأضف تعليقاً قصيراً عند الحاجة للتوضيح.
+- بعد الكود، يمكنك كتابة سطر أو سطرين للتوضيح إن لزم الأمر فقط.
+- تجنب المقدمات والخواتم الطويلة. أجب بشكل مباشر.`
       },
       ...state.messages.map(m => ({ role: m.role, content: m.content }))
     ];
@@ -1476,58 +1341,33 @@ async function generateReply(){
       },
       body: JSON.stringify({
         model: CONFIG.model,
-        messages,
-        max_tokens: 4096
+        messages: messagesPayload,
+        temperature: 0.6,
+        max_tokens: 2048
       })
     });
 
-    let data = null;
-    try { data = await res.json(); } catch (_) {}
-
     if (!res.ok) {
-      const apiMessage = data?.error?.message || data?.message || "خطأ غير معروف من Groq";
-      return `تعذّر الحصول على الرد من Groq.\n\n${apiMessage}`;
+      const errorData = await res.json().catch(() => ({}));
+      console.error("Groq API Error:", errorData);
+      if (res.status === 401) {
+        return "مفتاح API غير صالح أو منتهي الصلاحية. يرجى التحقق من المفتاح.";
+      }
+      if (errorData.error?.message?.includes("model")) {
+        return `عذرًا، اسم النموذج "${CONFIG.model}" غير صحيح أو غير متاح حاليًا. يرجى التحقق من اسم النموذج في لوحة تحكم Groq.`;
+      }
+      return `حدث خطأ في الاتصال بالخدمة: ${errorData.error?.message || res.statusText}`;
     }
 
-    const out = data?.choices?.[0]?.message?.content ?? data?.content?.[0]?.text ?? data?.reply;
+    const data = await res.json();
+    const out = data?.choices?.[0]?.message?.content;
+    
     if (out) return String(out).trim();
-    return "لم يصل رد صالح من النموذج.";
+    return "لم يصل ردّ صالح من الخدمة.";
   } catch (err){
-    return "تعذّر الاتصال بخدمة Groq. تأكد من اتصال الإنترنت وأن مفتاح API صالح.";
+    console.error("Fetch Error:", err);
+    return "تعذّر الاتصال بالخدمة. تحقّق من اتصالك بالإنترنت أو من صحة الرابط والمفتاح.";
   }
-}
-
-function simulateReply(raw){
-  const m = MODELS[state.model];
-  const q = String(raw).trim();
-  const low = q.toLowerCase();
-  const has = (...keys) => keys.some(k => low.includes(k));
-
-  if (has("مرحب", "السلام", "أهلا", "اهلا", "صباح", "مساء", "hi", "hello")){
-    return `أهلًا بك. أنا ${m.name}، وجاهز للمساعدة.\n\nاكتب سؤالك مباشرة، أو اطلب منّي صياغة نصّ أو تلخيص فكرة، وسأرتّب الإجابة بوضوح.`;
-  }
-
-  if (has("من أنت", "من انت", "اسمك", "ما اسمك")){
-    return `أنا ${m.name}، نموذج محادثة ضمن هذه الواجهة.\n\n${m.desc}.`;
-  }
-
-  if (has("لخص", "لخّص", "تلخيص", "اختصر")){
-    return `سأرتّب الخلاصة في ثلاث نقاط:\n\n١. الفكرة الأساسية واضحة، ويمكن تقديمها في جملة واحدة.\n٢. التفاصيل الثانوية تُؤجَّل إلى فقرة تالية حتى لا تُربك القارئ.\n٣. النتيجة تُوضع في النهاية، بصيغة عملية قابلة للتنفيذ.\n\nأرسل النصّ كاملًا وأعيد صياغته على هذا الترتيب.`;
-  }
-
-  if (has("عنوان", "عناوين")){
-    return `ثلاثة عناوين مقترحة:\n\n١. الهدوء كاختيار، لا كظرف.\n٢. في مدح البطء.\n٣. ما تبقّى بعد أن تُغلق الأبواب.\n\nاختر واحدًا وسأبني حوله مطلعًا من فقرتين.`;
-  }
-
-  if (has("كود", "html", "css", "javascript", "برمجة")){
-    return `بالتأكيد، هذا مثال بسيط لصفحة HTML:\n\n\`\`\`html\n<!DOCTYPE html>\n<html lang="ar" dir="rtl">\n<head>\n  <meta charset="UTF-8">\n  <title>صفحتي الأولى</title>\n</head>\n<body>\n  <h1>مرحباً بالعالم!</h1>\n  <p>هذه أول صفحة ويب لي.</p>\n</body>\n</html>\n\`\`\`\n\nيمكنك نسخ الكود وتجربته في متصفحك.`;
-  }
-
-  if (has("اكتب", "فقرة", "مقال", "نص")){
-    return `تفضّل:\n\nالهدوء ليس غياب الصوت، بل قدرة على الانتقال بين الأصوات دون أن تفقد نفسك. يتعلّم المرء أن يترك ضجيجًا خلفه، لا لأنه يكرهه، بل لأنه صار يعرف ما يستحقّ أن يُسمَع. وفي هذا الاختيار الصغير، يتشكّل يومٌ كامل.\n\nأخبرني إن أردت النصّ أقصر أو بنبرة مختلفة.`;
-  }
-
-  return `فهمت ما طرحته: «${q.length > 90 ? q.slice(0, 90) + "…" : q}».\n\nهذه واجهة تجريبية تعمل محليًا دون اتصال بخدمة ذكاء اصطناعي، لذلك لا أستطيع توليد إجابة حقيقية بعد.\n\nلتشغيل الردود الفعلية: ضع رابط الخدمة ومفتاح الوصول في كائن الإعدادات أعلى الشيفرة، وسيتحوّل المسار تلقائيًا إلى الاتصال الحقيقي.`;
 }
 
 /* ============ إرسال ============ */
@@ -1540,26 +1380,25 @@ async function handleSend(){
   autoGrow();
   updateSend();
 
-  // إن كانت هذه أول رسالة، أنشئ معرف محادثة جديد
   if (state.messages.length === 0) {
     state.currentChatId = Date.now().toString();
   }
 
   addMessage("user", text);
   state.messages.push({ role: "user", content: text });
-  saveCurrentChat(); // حفظ فوري بعد رسالة المستخدم
+  saveCurrentChat();
 
   const typing = showTyping();
-  await wait(420 + Math.random() * 420);
-  typing.remove();
+  await wait(300);
 
   const reply = await generateReply();
+  typing.remove();
 
   const el = addMessage("assistant", "");
   state.messages.push({ role: "assistant", content: reply });
   await typeInto(el, reply);
 
-  saveCurrentChat(); // حفظ بعد رد الذكاء الاصطناعي
+  saveCurrentChat();
 
   state.busy = false;
   updateSend();
@@ -1598,80 +1437,118 @@ input.addEventListener("keydown", (e) => {
   }
 });
 
-/* ============ نسخ الكود — يعمل أيضاً داخل WebView و content:// ============ */
-async function copyTextRobust(text){
-  if (!text) return false;
+/* ============ نافذة النسخ الاحتياطية ============ */
+function showCopyModal(code) {
+  copyModalTextarea.value = code;
+  copyModal.classList.add("active");
 
-  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+  setTimeout(() => {
+    copyModalTextarea.focus();
+    copyModalTextarea.select();
     try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch (_) {}
-  }
-
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.setAttribute('readonly', '');
-  ta.style.position = 'fixed';
-  ta.style.top = '0';
-  ta.style.left = '-9999px';
-  ta.style.opacity = '0';
-  ta.style.pointerEvents = 'none';
-  document.body.appendChild(ta);
-  ta.focus();
-  ta.select();
-  ta.setSelectionRange(0, ta.value.length);
-
-  let ok = false;
-  try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
-  ta.remove();
-  return ok;
+      copyModalTextarea.setSelectionRange(0, code.length);
+    } catch (e) {}
+  }, 200);
 }
 
+function hideCopyModal() {
+  copyModal.classList.remove("active");
+}
+
+copyModalClose.addEventListener("click", hideCopyModal);
+copyModal.addEventListener("click", (e) => {
+  if (e.target === copyModal) hideCopyModal();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && copyModal.classList.contains("active")) {
+    hideCopyModal();
+  }
+});
+
+/* ============ دوال النسخ ============ */
+function tryNavigatorClipboard(text) {
+  return new Promise((resolve, reject) => {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text)
+        .then(() => resolve(true))
+        .catch(() => reject());
+    } else {
+      reject();
+    }
+  });
+}
+
+function tryExecCommand(text) {
+  return new Promise((resolve, reject) => {
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "absolute";
+      ta.style.left = "-9999px";
+      ta.style.top = "0";
+      ta.style.fontSize = "16px";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, ta.value.length);
+      const success = document.execCommand("copy");
+      document.body.removeChild(ta);
+      if (success) resolve(true);
+      else reject();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+/* ============ نسخ الكود ============ */
 chat.addEventListener('click', async (e) => {
   const btn = e.target.closest('.copy-btn');
   if (!btn || btn.disabled) return;
 
   const codeBlock = btn.closest('.code-block');
-  const codeElement = codeBlock?.querySelector('code');
+  const codeElement = codeBlock.querySelector('code');
   if (!codeElement) return;
 
-  const original = btn.innerHTML;
-  const code = codeElement.textContent.replace(/\n$/, '');
-  btn.disabled = true;
+  const code = codeElement.textContent;
+  const originalText = btn.textContent;
 
-  const ok = await copyTextRobust(code);
-  if (ok) {
-    btn.classList.add('copied');
-    btn.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg><span>تم النسخ</span>`;
+  try {
+    await tryNavigatorClipboard(code);
+    btn.textContent = 'تم النسخ!';
+    btn.style.color = '#98C379';
+    btn.style.borderColor = 'rgba(152, 195, 121, 0.4)';
     setTimeout(() => {
-      btn.innerHTML = original;
-      btn.classList.remove('copied');
-      btn.disabled = false;
-    }, 1600);
-  } else {
-    btn.innerHTML = '<span>فشل النسخ</span>';
+      btn.textContent = originalText;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+    return;
+  } catch (e) {}
+
+  try {
+    await tryExecCommand(code);
+    btn.textContent = 'تم النسخ!';
+    btn.style.color = '#98C379';
+    btn.style.borderColor = 'rgba(152, 195, 121, 0.4)';
     setTimeout(() => {
-      btn.innerHTML = original;
-      btn.disabled = false;
-    }, 1600);
-  }
+      btn.textContent = originalText;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 2000);
+    return;
+  } catch (e) {}
+
+  showCopyModal(code);
 });
 
 /* ============ التهيئة ============ */
+loadHistoryFromStorage();
 buildModelMenu();
 buildSuggestions();
-setModel("gpt-oss-120b");
+setModel("qwen/qwen3.8-27b");
 updateSend();
-if (state.userEmail) {
-  showApp();
-  input.focus();
-} else {
-  showAuth();
-}
+input.focus();
 </script>
 </body>
 </html>
