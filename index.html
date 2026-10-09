@@ -1,500 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>شات الذكاء الاصطناعي - Puter.js</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 16px;
-    }
-
-    .chat-container {
-      width: 100%;
-      max-width: 760px;
-      height: 88vh;
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    /* ===== الهيدر ===== */
-    .chat-header {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      padding: 16px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .chat-header h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .model-select {
-      padding: 9px 14px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff;
-      font-size: 0.82rem;
-      font-family: inherit;
-      cursor: pointer;
-      outline: none;
-      backdrop-filter: blur(4px);
-      max-width: 240px;
-    }
-
-    .model-select option {
-      color: #333;
-      background: #fff;
-    }
-
-    .model-select optgroup {
-      color: #667eea;
-      background: #f8f9fa;
-      font-weight: 700;
-    }
-
-    /* ===== منطقة الرسائل ===== */
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      background: #f8f9fb;
-    }
-
-    .message {
-      max-width: 82%;
-      padding: 13px 17px;
-      border-radius: 16px;
-      line-height: 1.75;
-      font-size: 0.94rem;
-      word-wrap: break-word;
-      white-space: pre-wrap;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .message.user {
-      align-self: flex-start;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      border-bottom-right-radius: 5px;
-      box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3);
-    }
-
-    .message.ai {
-      align-self: flex-end;
-      background: #ffffff;
-      color: #1a1a2e;
-      border: 1px solid #e8eaf0;
-      border-bottom-left-radius: 5px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .message.error {
-      align-self: center;
-      background: #fff0f0;
-      color: #d63031;
-      font-size: 0.85rem;
-      max-width: 90%;
-      border: 1px solid #ffd5d5;
-    }
-
-    .typing-indicator {
-      align-self: flex-end;
-      background: #ffffff;
-      border: 1px solid #e8eaf0;
-      color: #888;
-      padding: 13px 18px;
-      border-radius: 16px;
-      border-bottom-left-radius: 5px;
-      font-size: 0.85rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .typing-dots {
-      display: flex;
-      gap: 3px;
-    }
-
-    .typing-dots span {
-      width: 6px;
-      height: 6px;
-      background: #aaa;
-      border-radius: 50%;
-      animation: bounce 1.2s infinite;
-    }
-
-    .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
-
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-5px); }
-    }
-
-    /* ===== منطقة الإدخال ===== */
-    .chat-input-area {
-      display: flex;
-      padding: 14px 16px;
-      gap: 10px;
-      border-top: 1px solid #e8eaf0;
-      background: #ffffff;
-      align-items: flex-end;
-    }
-
-    .chat-input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 2px solid #e8eaf0;
-      border-radius: 14px;
-      font-size: 0.94rem;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      resize: none;
-      min-height: 48px;
-      max-height: 130px;
-      line-height: 1.5;
-      background: #f8f9fb;
-    }
-
-    .chat-input:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
-      background: #fff;
-    }
-
-    .chat-input::placeholder {
-      color: #aaa;
-    }
-
-    .send-btn {
-      padding: 0 24px;
-      height: 48px;
-      border: none;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      font-size: 0.94rem;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      white-space: nowrap;
-      box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
-    }
-
-    .send-btn:hover:not(:disabled) {
-      opacity: 0.9;
-      transform: translateY(-1px);
-    }
-
-    .send-btn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-
-    .send-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* ===== شريط التمرير ===== */
-    .chat-messages::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chat-messages::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 3px;
-    }
-
-    .chat-messages::-webkit-scrollbar-thumb:hover {
-      background: #aaa;
-    }
-
-    /* ===== استجابة الجوال ===== */
-    @media (max-width: 600px) {
-      body { padding: 0; }
-
-      .chat-container {
-        height: 100vh;
-        border-radius: 0;
-        max-width: 100%;
-      }
-
-      .chat-header {
-        padding: 12px 14px;
-      }
-
-      .chat-header h1 {
-        font-size: 1rem;
-      }
-
-      .model-select {
-        max-width: 100%;
-        width: 100%;
-        font-size: 0.8rem;
-      }
-
-      .message {
-        max-width: 90%;
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101010"><title>Nour — AI Chat</title>
+<style>
+:root{color-scheme:dark;--bg:#111110;--panel:#191918;--panel2:#20201f;--line:#30302e;--text:#f3f2ef;--muted:#a5a49f;--accent:#d6f36a;--accentText:#17190d;--user:#292927;--radius:22px}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);overflow:hidden}button,textarea,input,select{font:inherit}button{cursor:pointer}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}.app{height:100dvh;display:flex;min-height:0}.sidebar{width:264px;flex-shrink:0;background:#171716;border-left:1px solid #272725;padding:18px 13px;display:flex;flex-direction:column;gap:18px;transition:transform .25s}.brand{display:flex;align-items:center;gap:10px;padding:3px 8px 12px}.brand-mark{height:34px;width:34px;border-radius:12px;background:var(--accent);color:#20220f;display:grid;place-items:center;font-weight:900;font-size:20px}.brand-name{font-size:18px;font-weight:750;letter-spacing:-.5px}.brand-sub{font-size:11px;color:var(--muted);margin-top:2px}.new-chat{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;border:1px solid #3a3a36;background:#222220;color:var(--text);border-radius:13px;padding:12px;font-weight:650}.new-chat:hover,.history-item:hover{background:#2b2b28}.side-label{font-size:11px;color:#777770;padding:0 10px;margin-bottom:-8px}.history{overflow:auto;display:flex;flex-direction:column;gap:4px}.history-item{border:0;text-align:right;color:#cecdc8;background:transparent;padding:10px 11px;border-radius:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.history-item.active{background:#292927;color:#fff}.side-bottom{margin-top:auto;border-top:1px solid #30302e;padding:14px 8px 2px;color:var(--muted);font-size:12px;line-height:1.7}.main{min-width:0;flex:1;display:flex;flex-direction:column;position:relative}.topbar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid #242422;gap:12px}.top-left{display:flex;align-items:center;gap:12px;min-width:0}.icon-btn{width:39px;height:39px;display:grid;place-items:center;border:1px solid transparent;background:transparent;color:#c9c8c2;border-radius:12px;font-size:20px}.icon-btn:hover{background:#262624}.mobile-brand{display:none}.model-wrap{position:relative}.model-trigger{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #343431;border-radius:13px;background:#1b1b19;color:var(--text);font-size:13px;font-weight:650;max-width:min(62vw,360px)}.model-trigger .model-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.chevron{color:#9d9d96;font-size:12px}.model-menu{position:absolute;top:calc(100% + 9px);right:0;width:min(350px,calc(100vw - 32px));max-height:65vh;overflow:auto;background:#222220;border:1px solid #3b3b37;border-radius:16px;padding:8px;box-shadow:0 18px 60px #0009;z-index:10;display:none}.model-menu.open{display:block}.menu-heading{font-size:11px;color:#999990;padding:9px 10px}.model-option{width:100%;display:flex;align-items:center;gap:10px;text-align:right;padding:11px 10px;border:0;background:transparent;color:#e8e7e2;border-radius:10px}.model-option:hover{background:#30302d}.model-option.selected{background:#34352b}.model-dot{width:8px;height:8px;border-radius:50%;background:#7c7c72;flex-shrink:0}.model-option.selected .model-dot{background:var(--accent)}.model-option span:nth-child(2){min-width:0;flex:1;overflow-wrap:anywhere;font-size:13px}.check{color:var(--accent)}.top-actions{display:flex;align-items:center;gap:5px}.status-pill{font-size:11px;color:#a9b88a;background:#23271a;border:1px solid #343b25;padding:6px 9px;border-radius:999px;white-space:nowrap}.chat-scroll{flex:1;overflow:auto;scroll-behavior:smooth;padding:28px 20px 18px}.conversation{max-width:790px;margin:0 auto;display:flex;flex-direction:column;gap:23px;min-height:100%}.welcome{margin:auto 0;display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 0 40px}.welcome-symbol{width:56px;height:56px;border-radius:19px;background:var(--accent);color:#1a1b12;display:grid;place-items:center;font-size:27px;font-weight:900;margin-bottom:20px;box-shadow:0 8px 35px #d6f36a14}.welcome h1{font-size:clamp(25px,4vw,36px);font-weight:650;letter-spacing:-1px;margin:0 0 10px}.welcome p{color:#aaa9a3;margin:0;line-height:1.8;font-size:14px}.suggestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:min(100%,560px);margin-top:28px}.suggestion{background:#1a1a19;border:1px solid #30302d;border-radius:15px;color:#c9c8c2;text-align:right;padding:13px 15px;line-height:1.6;font-size:13px}.suggestion:hover{border-color:#60604f;background:#222220}.message-row{display:flex;flex-direction:column;gap:7px;animation:rise .32s cubic-bezier(.2,.75,.25,1)}.ai .bubble.revealing{animation:answerIn .42s cubic-bezier(.2,.75,.25,1)}.message-row.user{align-items:flex-start}.message-row.ai{align-items:stretch}.role-label{font-size:11px;color:#96968e;padding:0 4px}.bubble{line-height:1.9;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}.user .bubble{background:var(--user);border:1px solid #343431;border-radius:19px 19px 5px 19px;padding:12px 16px;max-width:min(88%,650px)}.ai .bubble{padding:0 3px;color:#eeede8}.message-actions{display:flex;gap:6px;opacity:.8}.mini-action{border:1px solid transparent;background:transparent;color:#a7a69f;border-radius:8px;padding:5px 8px;font-size:11px}.mini-action:hover{background:#272725;color:#fff}.typing{display:flex;gap:5px;padding:8px 4px}.typing span{width:6px;height:6px;border-radius:50%;background:#a4a49b;animation:bounce 1.2s infinite}.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}@keyframes answerIn{from{opacity:.15;filter:blur(2px);transform:translateY(7px)}to{opacity:1;filter:blur(0);transform:translateY(0)}}@keyframes bounce{50%{transform:translateY(-5px);opacity:.5}}@keyframes rise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.composer-area{padding:8px 20px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,#111110 18%)}.composer{max-width:790px;margin:0 auto;background:#20201e;border:1px solid #41413b;border-radius:23px;padding:11px 12px 10px;box-shadow:0 9px 35px #0002;transition:border-color .2s}.composer:focus-within{border-color:#666653}.composer textarea{width:100%;border:0;outline:0;resize:none;background:transparent;color:var(--text);padding:6px 7px;min-height:38px;max-height:180px;line-height:1.7;font-size:14px}.composer textarea::placeholder{color:#888880}.composer-bottom{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:6px}.composer-hint{font-size:10px;color:#77776f;padding:0 6px}.send-btn{height:38px;min-width:42px;border:0;border-radius:13px;background:var(--accent);color:var(--accentText);display:flex;align-items:center;justify-content:center;gap:7px;padding:0 13px;font-weight:800}.send-btn:disabled{opacity:.45;cursor:not-allowed}.footer-note{text-align:center;color:#6e6e67;font-size:10px;margin-top:9px}.toast{position:absolute;bottom:125px;left:50%;transform:translateX(-50%);background:#292927;border:1px solid #45453e;padding:10px 14px;border-radius:12px;font-size:12px;display:none;z-index:20;max-width:90%;text-align:center}.toast.show{display:block}.overlay{display:none}
+@media(max-width:720px){.sidebar{position:fixed;z-index:30;top:0;bottom:0;right:0;width:min(290px,85vw);transform:translateX(105%);box-shadow:none}.sidebar.open{transform:translateX(0);box-shadow:0 0 0 100vmax #0009}.overlay.show{display:block;position:fixed;inset:0;z-index:20;background:#0008}.topbar{height:62px;padding:0 12px}.mobile-brand{display:block;font-size:15px;font-weight:750}.desktop-brand{display:none}.status-pill{display:none}.chat-scroll{padding:20px 16px 12px}.composer-area{padding:8px 12px calc(12px + env(safe-area-inset-bottom))}.suggestions{grid-template-columns:1fr}.welcome{padding:18px 0 28px}.welcome h1{font-size:27px}.bubble{font-size:14px}.model-trigger{max-width:56vw;padding:8px 10px}.composer{border-radius:20px}.footer-note{font-size:9px}}
+@media(min-width:721px){.sidebar{transform:none!important}}
+</style>
 </head>
 <body>
-
-  <div class="chat-container">
-    <!-- الهيدر مع اختيار النموذج -->
-    <div class="chat-header">
-      <h1>🤖 شات الذكاء الاصطناعي</h1>
-      <select class="model-select" id="modelSelect" aria-label="اختر نموذج الذكاء الاصطناعي">
-        <option value="gpt-5.6-luna">GPT-5.6 Luna (افتراضي)</option>
-      </select>
-      <div id="statusText" style="width:100%;font-size:.78rem;opacity:.95" role="status">جارٍ التحقق من النماذج المتاحة...</div>
-    </div>
-
-    <!-- منطقة الرسائل -->
-    <div class="chat-messages" id="messages">
-      <div class="message ai">
-        مرحباً! 👋 اختر النموذج من القائمة أعلاه واكتب رسالتك للبدء.
-      </div>
-    </div>
-
-    <!-- منطقة الإدخال -->
-    <div class="chat-input-area">
-      <textarea
-        class="chat-input"
-        id="userInput"
-        placeholder="اكتب رسالتك هنا... (Shift + Enter لسطر جديد)"
-        rows="1"
-      ></textarea>
-      <button class="send-btn" id="sendBtn" onclick="sendMessage()">إرسال</button>
-    </div>
-  </div>
-
-  <!-- مكتبة Puter.js -->
-  <script src="https://js.puter.com/v2/"></script>
-
-  <script>
-    // ===== العناصر =====
-    const messagesEl = document.getElementById('messages');
-    const inputEl = document.getElementById('userInput');
-    const sendBtn = document.getElementById('sendBtn');
-    const modelSelect = document.getElementById('modelSelect');
-    let isLoading = false;
-
-    // ===== أحداث الإدخال =====
-    inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    inputEl.addEventListener('input', () => {
-      inputEl.style.height = 'auto';
-      inputEl.style.height = Math.min(inputEl.scrollHeight, 130) + 'px';
-    });
-
-    // ===== دوال مساعدة =====
-    function addMessage(text, type) {
-      const div = document.createElement('div');
-      div.className = `message ${type}`;
-      div.textContent = text;
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      return div;
-    }
-
-    function showTyping() {
-      const div = document.createElement('div');
-      div.className = 'typing-indicator';
-      div.id = 'typingIndicator';
-      div.innerHTML = '⏳ يكتب <div class="typing-dots"><span></span><span></span><span></span></div>';
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-
-    function hideTyping() {
-      const el = document.getElementById('typingIndicator');
-      if (el) el.remove();
-    }
-
-    // ===== استخراج النص من الرد =====
-    function extractResponseText(response) {
-      if (typeof response === 'string') return response;
-
-      if (response?.message?.content) {
-        const content = response.message.content;
-        if (typeof content === 'string') return content;
-        if (Array.isArray(content)) {
-          return content.map(part => part.text || '').join('');
-        }
-      }
-
-      if (response?.text) return response.text;
-      if (response?.result) return response.result;
-
-      return JSON.stringify(response);
-    }
-
-    // ===== رسائل تشخيص واضحة =====
-    const statusEl = document.getElementById('statusText');
-
-    function readableError(err) {
-      const code = err?.error?.code || err?.code || '';
-      const msg = err?.error?.msg || err?.message || (typeof err === 'string' ? err : '');
-      const detail = [code, msg].filter(Boolean).join(' — ');
-      const lower = detail.toLowerCase();
-
-      if (location.protocol === 'file:') {
-        return 'الملف مفتوح مباشرة من الهاتف (file://). مكتبة Puter تحتاج صفحة مستضافة على HTTPS أو خادم محلي. ارفع الملف إلى Netlify أو GitHub Pages ثم جرّبه.';
-      }
-      if (lower.includes('unsupported_origin')) {
-        return 'Puter رفض عنوان الصفحة. افتح الموقع من رابط HTTPS أو http://localhost، وليس من ملف محلي أو معاينة داخلية.';
-      }
-      if (lower.includes('popup_blocked')) {
-        return 'المتصفح منع نافذة تسجيل الدخول. اسمح بالنوافذ المنبثقة وحاول مرة أخرى.';
-      }
-      if (lower.includes('auth') || lower.includes('sign') || lower.includes('login')) {
-        return 'مشكلة تسجيل دخول أو صلاحيات Puter. افتح Puter.com وسجّل الدخول، ثم أعد المحاولة. التفاصيل: ' + (detail || 'غير متاحة');
-      }
-      if (lower.includes('usage') || lower.includes('limit') || lower.includes('quota')) {
-        return 'تم بلوغ حد الاستخدام المتاح لهذا الحساب أو النموذج. جرّب نموذجًا آخر أو انتظر تجدد الحد. التفاصيل: ' + detail;
-      }
-      if (lower.includes('model') || lower.includes('not found') || lower.includes('unsupported')) {
-        return 'النموذج غير متاح أو معرّفه غير صحيح. اختر نموذجًا من القائمة التي تم تحميلها. التفاصيل: ' + (detail || 'غير متاحة');
-      }
-      if (lower.includes('network') || lower.includes('fetch') || lower.includes('timeout')) {
-        return 'تعذر الاتصال بخدمة Puter. تحقق من الإنترنت. التفاصيل: ' + detail;
-      }
-      return 'فشل الطلب. تفاصيل الخطأ: ' + (detail || 'لم يُرجع النظام تفاصيل إضافية.');
-    }
-
-    async function loadAvailableModels() {
-      try {
-        if (!window.puter?.ai || typeof puter.ai.listModels !== 'function') {
-          statusEl.textContent = 'تعذر تحميل قائمة النماذج؛ جرّب إعادة تحميل الصفحة.';
-          return;
-        }
-        const result = await puter.ai.listModels();
-        const models = Array.isArray(result) ? result : (result?.models || result?.data || []);
-        const normalized = models.map(m => ({
-          id: typeof m === 'string' ? m : (m.id || m.name || m.model),
-          label: typeof m === 'string' ? m : (m.name || m.id || m.model)
-        })).filter(m => m.id);
-
-        if (!normalized.length) {
-          statusEl.textContent = 'لم تُرجع الخدمة قائمة نماذج؛ جرّب إعادة تحميل الصفحة.';
-          return;
-        }
-        const previous = modelSelect.value;
-        modelSelect.innerHTML = '';
-        normalized.sort((a, b) => a.label.localeCompare(b.label));
-        normalized.forEach(m => {
-          const option = document.createElement('option');
-          option.value = m.id;
-          option.textContent = m.label;
-          modelSelect.appendChild(option);
-        });
-        if (normalized.some(m => m.id === previous)) modelSelect.value = previous;
-        statusEl.textContent = `تم تحميل ${normalized.length} نموذجًا من Puter.`;
-      } catch (err) {
-        console.warn('تعذر تحميل النماذج:', err);
-        statusEl.textContent = 'تعذر تحميل النماذج تلقائيًا. يمكنك تجربة إعادة تحميل الصفحة.';
-      }
-    }
-
-    async function sendMessage() {
-      const userText = inputEl.value.trim();
-      if (!userText || isLoading) return;
-
-      if (location.protocol === 'file:') {
-        addMessage('⚠️ ' + readableError({message:'unsupported_origin'}), 'error');
-        return;
-      }
-
-      isLoading = true;
-      sendBtn.disabled = true;
-      inputEl.value = '';
-      inputEl.style.height = 'auto';
-      addMessage(userText, 'user');
-      showTyping();
-
-      try {
-        if (!window.puter?.ai || typeof puter.ai.chat !== 'function') {
-          throw new Error('لم يتم تحميل مكتبة Puter.js. تحقق من الإنترنت ثم أعد تحميل الصفحة.');
-        }
-        // Puter.js handles authentication automatically when required.
-        const response = await puter.ai.chat(userText, { model: modelSelect.value || 'gpt-5.6-luna' });
-        hideTyping();
-        const aiText = extractResponseText(response);
-        if (!aiText || aiText === '[object Object]') {
-          console.warn('استجابة غير متوقعة من النموذج:', response);
-          addMessage('⚠️ وصل رد غير متوقع من النموذج. جرّب نموذجًا آخر.', 'error');
-        } else {
-          addMessage(aiText, 'ai');
-        }
-      } catch (err) {
-        hideTyping();
-        console.error('Puter.js Error:', err);
-        addMessage('⚠️ ' + readableError(err), 'error');
-      } finally {
-        isLoading = false;
-        sendBtn.disabled = false;
-        inputEl.focus();
-      }
-    }
-
-    if (location.protocol === 'file:') {
-      statusEl.textContent = 'تنبيه: افتح الصفحة من رابط HTTPS؛ تشغيلها كملف محلي لن يسمح بتسجيل الدخول إلى Puter.';
-    } else {
-      loadAvailableModels();
-    }
+<div class="app">
+ <aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="brand-mark">N</div><div><div class="brand-name">Nour</div><div class="brand-sub">مساحة محادثتك مع الذكاء الاصطناعي</div></div></div>
+  <button class="new-chat" id="newChat"><span>＋</span><span>محادثة جديدة</span></button>
+  <div class="side-label">محادثاتك الأخيرة</div><div class="history" id="history"><div class="side-label" style="padding-top:10px">ستظهر محادثاتك هنا</div></div>
+  <div class="side-bottom">واجهة مستقلة لا تفرض تعليمات شخصية على النموذج.<br>توفّر النماذج واستخدامها يخضعان لخدمة Puter.</div>
+ </aside>
+ <div class="overlay" id="overlay"></div>
+ <main class="main">
+  <header class="topbar">
+   <div class="top-left">
+    <button class="icon-btn" id="menuBtn" aria-label="القائمة">☰</button>
+    <div class="mobile-brand">Nour</div>
+    <div class="desktop-brand" style="font-size:13px;color:#85857d">المحادثة</div>
+    <div class="model-wrap"><button class="model-trigger" id="modelTrigger" aria-haspopup="listbox" aria-expanded="false"><span class="model-name" id="selectedModelName">GPT-5.6 Luna</span><span class="chevron">▾</span></button><div class="model-menu" id="modelMenu" role="listbox"><div class="menu-heading">اختر النموذج</div><div id="modelOptions"><button class="model-option selected" data-model="gpt-5.6-luna"><span class="model-dot"></span><span>GPT-5.6 Luna</span><span class="check">✓</span></button></div></div></div>
+   </div>
+   <div class="top-actions"><span class="status-pill" id="statusText">جارٍ تحميل النماذج…</span><button class="icon-btn" id="clearBtn" title="مسح المحادثة" aria-label="مسح المحادثة">↺</button></div>
+  </header>
+  <section class="chat-scroll" id="chatScroll"><div class="conversation" id="messages">
+   <div class="welcome" id="welcome"><div class="welcome-symbol">N</div><h1>أهلًا بيك، نبدأ بإيه؟</h1><p>اسأل، فكّر بصوت عالٍ، أو ابدأ فكرة جديدة.<br>اختار النموذج اللي يناسبك من أعلى الشاشة.</p><div class="suggestions"><button class="suggestion">ساعدني أطلع بفكرة مشروع مختلفة</button><button class="suggestion">اشرح لي موضوعًا صعبًا ببساطة</button><button class="suggestion">اكتب معي قصة مشوّقة</button><button class="suggestion">راجع الكود ده وساعدني أصلحه</button></div></div>
+  </div></section>
+  <div class="composer-area"><div class="composer"><textarea id="userInput" rows="1" placeholder="اكتب رسالتك هنا…" aria-label="رسالتك"></textarea><div class="composer-bottom"><span class="composer-hint">Enter للإرسال · Shift + Enter لسطر جديد</span><button class="send-btn" id="sendBtn" aria-label="إرسال الرسالة"><span>إرسال</span><span>↑</span></button></div></div><div class="footer-note">قد تختلف حدود الاستخدام حسب النموذج وحساب Puter.</div></div>
+  <div class="toast" id="toast" role="status"></div>
+ </main>
+</div>
+<script src="https://js.puter.com/v2/"></script>
+<script>
+const $=id=>document.getElementById(id);const messagesEl=$('messages'),inputEl=$('userInput'),sendBtn=$('sendBtn'),modelMenu=$('modelMenu'),modelOptions=$('modelOptions'),statusEl=$('statusText');
+let isLoading=false,selectedModel='gpt-5.6-luna',currentChatId=null,chats=[];const STORE='nour_puter_chats_v1';
+function toast(text){const el=$('toast');el.textContent=text;el.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove('show'),3200)}
+function escapeText(s){return String(s??'')}
+function newChat(){currentChatId=null;messagesEl.innerHTML='';const w=document.createElement('div');w.className='welcome';w.id='welcome';w.innerHTML='<div class="welcome-symbol">N</div><h1>أهلًا بيك، نبدأ بإيه؟</h1><p>اسأل، فكّر بصوت عالٍ، أو ابدأ فكرة جديدة.<br>اختار النموذج اللي يناسبك من أعلى الشاشة.</p><div class="suggestions"><button class="suggestion">ساعدني أطلع بفكرة مشروع مختلفة</button><button class="suggestion">اشرح لي موضوعًا صعبًا ببساطة</button><button class="suggestion">اكتب معي قصة مشوّقة</button><button class="suggestion">راجع الكود ده وساعدني أصلحه</button></div>';messagesEl.appendChild(w);$('chatScroll').scrollTop=0;bindSuggestions();renderHistory();$('sidebar').classList.remove('open');$('overlay').classList.remove('show')}
+function bindSuggestions(){document.querySelectorAll('.suggestion').forEach(b=>b.onclick=()=>{inputEl.value=b.textContent;inputEl.focus();resizeInput();sendMessage()})}
+function renderHistory(){const root=$('history');root.innerHTML='';if(!chats.length){root.innerHTML='<div class="side-label" style="padding-top:10px">ستظهر محادثاتك هنا</div>';return}chats.slice().reverse().forEach(chat=>{const b=document.createElement('button');b.className='history-item'+(chat.id===currentChatId?' active':'');b.textContent=chat.title||'محادثة جديدة';b.title=b.textContent;b.onclick=()=>openChat(chat.id);root.appendChild(b)})}
+function persist(){try{localStorage.setItem(STORE,JSON.stringify(chats.slice(-30)))}catch(e){}renderHistory()}
+function startOrUpdateChat(){let c=chats.find(x=>x.id===currentChatId);if(!c){currentChatId=String(Date.now())+'-'+Math.random().toString(36).slice(2,7);c={id:currentChatId,title:'محادثة جديدة',model:selectedModel,messages:[]};chats.push(c)}return c}
+function openChat(id){const c=chats.find(x=>x.id===id);if(!c)return;currentChatId=id;messagesEl.innerHTML='';c.messages.forEach(m=>addMessage(m.text,m.role,false));renderHistory();$('sidebar').classList.remove('open');$('overlay').classList.remove('show');$('chatScroll').scrollTop=$('chatScroll').scrollHeight}
+function addMessage(text,role,scroll=true){const row=document.createElement('div');row.className='message-row '+(role==='user'?'user':'ai');const label=document.createElement('div');label.className='role-label';label.textContent=role==='user'?'أنت':'الرد';const bubble=document.createElement('div');bubble.className='bubble';bubble.textContent=escapeText(text);row.append(label,bubble);if(role==='ai'){const actions=document.createElement('div');actions.className='message-actions';const copy=document.createElement('button');copy.className='mini-action';copy.textContent='نسخ الرد';copy.onclick=async()=>{try{await navigator.clipboard.writeText(text);toast('تم نسخ الرد')}catch(e){toast('تعذر النسخ من المتصفح')}};actions.appendChild(copy);row.appendChild(actions)}messagesEl.appendChild(row);if(scroll)$('chatScroll').scrollTop=$('chatScroll').scrollHeight;return row}
+async function addAnimatedMessage(text){const row=document.createElement('div');row.className='message-row ai';const label=document.createElement('div');label.className='role-label';label.textContent='الرد';const bubble=document.createElement('div');bubble.className='bubble revealing';bubble.textContent='';row.append(label,bubble);messagesEl.appendChild(row);const chunks=String(text).match(/\S+\s*/g)||[String(text)];let shown='';for(let i=0;i<chunks.length;i++){shown+=chunks[i];bubble.textContent=shown;if(i%3===0||i===chunks.length-1){$('chatScroll').scrollTop=$('chatScroll').scrollHeight;await new Promise(resolve=>setTimeout(resolve,Math.min(18,7+chunks[i].length/3)))}}const actions=document.createElement('div');actions.className='message-actions';const copy=document.createElement('button');copy.className='mini-action';copy.textContent='نسخ الرد';copy.onclick=async()=>{try{await navigator.clipboard.writeText(text);toast('تم نسخ الرد')}catch(e){toast('تعذر النسخ من المتصفح')}};actions.appendChild(copy);row.appendChild(actions);$('chatScroll').scrollTop=$('chatScroll').scrollHeight;return row}
+function showTyping(){const row=document.createElement('div');row.className='message-row ai';row.id='typing';row.innerHTML='<div class="role-label">الرد</div><div class="typing"><span></span><span></span><span></span></div>';messagesEl.appendChild(row);$('chatScroll').scrollTop=$('chatScroll').scrollHeight}function hideTyping(){$('typing')?.remove()}
+function extractText(r){if(typeof r==='string')return r;const c=r?.message?.content;if(typeof c==='string')return c;if(Array.isArray(c))return c.map(x=>x?.text||'').join('');if(typeof r?.text==='string')return r.text;if(typeof r?.result==='string')return r.result;return ''}
+function normalizeModels(r){const arr=Array.isArray(r)?r:(r?.models||r?.data||[]);return arr.map(m=>typeof m==='string'?{id:m,label:m}:{id:m?.id||m?.model||m?.name,label:m?.name||m?.id||m?.model}).filter(m=>m.id)}
+async function loadModels(){try{if(!window.puter?.ai?.listModels){statusEl.textContent='تعذر تحميل النماذج';return}const models=normalizeModels(await puter.ai.listModels());if(!models.length){statusEl.textContent='لم تظهر نماذج متاحة';return}models.sort((a,b)=>a.label.localeCompare(b.label));modelOptions.innerHTML='';models.forEach(m=>{const b=document.createElement('button');b.className='model-option'+(m.id===selectedModel?' selected':'');b.dataset.model=m.id;b.setAttribute('role','option');const dot=document.createElement('span');dot.className='model-dot';const label=document.createElement('span');label.textContent=m.label;const check=document.createElement('span');check.className='check';check.textContent=m.id===selectedModel?'✓':'';b.append(dot,label,check);b.onclick=()=>chooseModel(m.id,m.label);modelOptions.appendChild(b)});if(!models.some(m=>m.id===selectedModel)){selectedModel=models[0].id;$('selectedModelName').textContent=models[0].label}statusEl.textContent=models.length+' نموذج متاح';}catch(e){console.warn(e);statusEl.textContent='قائمة النماذج غير متاحة'}}
+function chooseModel(id,label){selectedModel=id;$('selectedModelName').textContent=label||id;modelOptions.querySelectorAll('.model-option').forEach(b=>{b.classList.toggle('selected',b.dataset.model===id);const c=b.querySelector('.check');if(c)c.textContent=b.dataset.model===id?'✓':''});modelMenu.classList.remove('open');$('modelTrigger').setAttribute('aria-expanded','false');const c=chats.find(x=>x.id===currentChatId);if(c)c.model=id}
+function readableError(e){const s=String(e?.error?.message||e?.error?.msg||e?.message||e||'');const l=s.toLowerCase();if(location.protocol==='file:')return'افتح الموقع من رابط HTTPS مثل GitHub Pages، وليس كملف من الهاتف.';if(l.includes('auth')||l.includes('sign')||l.includes('login'))return'يبدو أن تسجيل الدخول إلى Puter مطلوب. جرّب الإرسال مرة أخرى ووافق على تسجيل الدخول.';if(l.includes('limit')||l.includes('quota')||l.includes('usage'))return'وصلت لحد الاستخدام المتاح لهذا النموذج. جرّب نموذجًا آخر أو انتظر تجدد الحد.';if(l.includes('model')||l.includes('not found')||l.includes('unsupported'))return'النموذج المختار غير متاح حاليًا. اختر نموذجًا آخر من القائمة.';if(l.includes('network')||l.includes('fetch'))return'تعذر الاتصال بالخدمة. تحقق من الإنترنت وحاول مرة أخرى.';return'حصل خطأ أثناء الطلب: '+(s||'تفاصيل الخطأ غير متاحة')}
+async function sendMessage(){const text=inputEl.value.trim();if(!text||isLoading)return;if(location.protocol==='file:'){toast('ارفع الملف إلى استضافة HTTPS أولًا');return}if(!window.puter?.ai?.chat){toast('مكتبة Puter لم تُحمّل. أعد تحميل الصفحة.');return}isLoading=true;sendBtn.disabled=true;inputEl.value='';resizeInput();$('welcome')?.remove();addMessage(text,'user');const c=startOrUpdateChat();c.model=selectedModel;c.messages.push({role:'user',text});if(c.title==='محادثة جديدة')c.title=text.length>34?text.slice(0,34)+'…':text;persist();showTyping();try{const response=await puter.ai.chat(text,{model:selectedModel});hideTyping();const answer=extractText(response)||JSON.stringify(response);await addAnimatedMessage(answer);c.messages.push({role:'ai',text:answer});persist()}catch(e){hideTyping();console.error('Puter error',e);addMessage(readableError(e),'ai');toast('تعذر إكمال الطلب')}finally{isLoading=false;sendBtn.disabled=false;inputEl.focus()}}
+function resizeInput(){inputEl.style.height='auto';inputEl.style.height=Math.min(inputEl.scrollHeight,180)+'px'}
+inputEl.addEventListener('input',resizeInput);inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});sendBtn.addEventListener('click',sendMessage);$('newChat').addEventListener('click',newChat);$('clearBtn').addEventListener('click',()=>{if(messagesEl.querySelector('.message-row'))newChat();else toast('المحادثة فارغة بالفعل')});$('modelTrigger').addEventListener('click',()=>{const open=modelMenu.classList.toggle('open');$('modelTrigger').setAttribute('aria-expanded',String(open))});document.addEventListener('click',e=>{if(!e.target.closest('.model-wrap')){modelMenu.classList.remove('open');$('modelTrigger').setAttribute('aria-expanded','false')}});$('menuBtn').addEventListener('click',()=>{$('sidebar').classList.toggle('open');$('overlay').classList.toggle('show')});$('overlay').addEventListener('click',()=>{$('sidebar').classList.remove('open');$('overlay').classList.remove('show')});bindSuggestions();try{chats=JSON.parse(localStorage.getItem(STORE)||'[]')}catch(e){chats=[]}renderHistory();if(location.protocol==='file:')statusEl.textContent='يلزم رابط HTTPS';else loadModels();
 </script>
-
-</body>
-</html>
+</body></html>
